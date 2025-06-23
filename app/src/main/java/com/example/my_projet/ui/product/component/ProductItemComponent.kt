@@ -1,6 +1,8 @@
 package com.example.my_projet.ui.product.component
 
+import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,10 +19,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.my_projet.R
+import com.example.my_projet.data.Api.CardApi
+import com.example.my_projet.data.Entities.CartItem
 import com.example.my_projet.data.Entities.Product
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
-fun ProductItem(product: Product, onNavigateToDetails: (String) -> Unit) {
+fun ProductItem(
+    product: Product,
+    onNavigateToDetails: (String) -> Unit,
+    onAddToCart: (Product) -> Unit
+) {
     val context = LocalContext.current
 
     val imageResId = context.resources.getIdentifier(
@@ -36,21 +47,35 @@ fun ProductItem(product: Product, onNavigateToDetails: (String) -> Unit) {
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
-            // عرض الصورة
+            // Image clickable for details
             Image(
                 painter = painterResource(id = if (imageResId != 0) imageResId else R.drawable.ml),
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(150.dp)
+                    .clickable { onNavigateToDetails(product.id.toString()) }, // <-- ici
             )
 
             Text(text = " ${product.name}")
             Text(text = " ${product.price}")
-//            Text(text = "Description: ${product.description}")
-            Button(onClick = { onNavigateToDetails(product.id.toString()) }) {
-                Text(text = "Plus de détails...")
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            val currentDate = sdf.format(Date())
+
+            val item = CartItem(
+                userId = "userId",
+                productId = product.id.toString(),
+                dateAdded = currentDate
+            )
+            // Button for Add to Cart
+            Button(onClick = { CardApi(context, item) }) {
+                Text(text = "Ajouter au panier")
+
             }
         }
     }
+
+
+
+
 }

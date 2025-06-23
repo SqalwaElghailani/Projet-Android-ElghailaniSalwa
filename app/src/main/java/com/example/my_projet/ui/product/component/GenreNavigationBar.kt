@@ -19,6 +19,7 @@ fun GenresList(
     selectedGenre: String?,
     onGenreSelected: (String) -> Unit,
     onClearGenre: () -> Unit
+
 ) {
     Column {
         // N9sim la liste dyal genres f groupes dyal 3

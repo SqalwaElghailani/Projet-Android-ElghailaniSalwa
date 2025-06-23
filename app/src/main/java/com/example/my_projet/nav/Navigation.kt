@@ -60,7 +60,8 @@ fun AppNavigation(viewModel: ProductViewModel) {
                 onClearGenre = { viewModel.sendIntent(ProductIntent.ClearGenre) },
                 onNavigateToDetails = { productId -> navController.navigate("${Routes.ProductDetails}/$productId") },
                 onPreviousTop = { viewModel.sendIntent(ProductIntent.PreviousTopProduct) },
-                onNextTop = { viewModel.sendIntent(ProductIntent.NextTopProduct) }
+                onNextTop = { viewModel.sendIntent(ProductIntent.NextTopProduct) },
+                onAddToCart = { product -> viewModel.sendIntent(ProductIntent.AddToCart(product)) }
             )
         }
 

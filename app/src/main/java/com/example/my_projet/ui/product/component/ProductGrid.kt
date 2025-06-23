@@ -2,6 +2,8 @@ package com.example.my_projet.ui.product.component
 
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -13,13 +15,20 @@ import com.example.my_projet.data.Entities.Product
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ProductGrid(products: List<Product>, onClick: (String) -> Unit) {
+fun ProductGrid(products: List<Product>,
+                onClick: (String) -> Unit,
+                onAddToCart: (Product) -> Unit) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 160.dp),
-        modifier = Modifier.padding(8.dp)
+        columns = GridCells.Fixed(2), // ou 4 si bghiti 4 f ligne
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(8.dp)
     ) {
         items(products) { product ->
-            ProductItem(product = product, onNavigateToDetails = onClick)
+            ProductItem(
+                product = product,
+                onNavigateToDetails = onClick,
+                onAddToCart = onAddToCart // ✅
+            )
         }
     }
 }

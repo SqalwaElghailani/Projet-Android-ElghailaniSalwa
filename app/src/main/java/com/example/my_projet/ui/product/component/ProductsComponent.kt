@@ -11,14 +11,17 @@ import com.example.my_projet.data.Entities.Product
 
 
 @Composable
-fun ProductsList(products: List<Product>, onNavigateToDetails: (String) -> Unit) {
+fun ProductsList(products: List<Product>,
+                 onNavigateToDetails: (String) -> Unit,
+                 onAddToCart: (Product) -> Unit) {
     LazyColumn (
         modifier = Modifier
             .fillMaxSize()
             .padding(8.dp)
     ){
         items(products) { product ->
-            ProductItem(product, onNavigateToDetails)
+            ProductItem(product, onNavigateToDetails,onAddToCart = onAddToCart)
+
         }
     }
 }

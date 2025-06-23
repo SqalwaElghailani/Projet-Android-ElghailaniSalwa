@@ -24,7 +24,8 @@ fun HomeScreen(
     onClearGenre: () -> Unit,
     onNavigateToDetails: (String) -> Unit,
     onPreviousTop: () -> Unit,
-    onNextTop: () -> Unit
+    onNextTop: () -> Unit,
+    onAddToCart: (Product) -> Unit
 ) {
     Column {
         MainHeader(
@@ -34,6 +35,7 @@ fun HomeScreen(
             cartCount = cartCount,
             onNavigateToOrders = onNavigateToOrders,
             onNavigateToCart = onNavigateToCart
+
         )
         if (topProducts.isNotEmpty()) {
             TopBannerWithGenres(
@@ -47,6 +49,11 @@ fun HomeScreen(
             )
         }
 
-        ProductGrid(products = filteredProducts, onClick = onNavigateToDetails)
+        ProductGrid(
+            products = filteredProducts,
+            onClick = onNavigateToDetails,
+            onAddToCart = onAddToCart
+        )
+
     }
 }

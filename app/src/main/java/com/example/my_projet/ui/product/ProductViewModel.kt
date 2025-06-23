@@ -59,7 +59,14 @@ class ProductViewModel @Inject constructor(
                         val newIndex = if (current < _state.value.topProducts.lastIndex) current + 1 else 0
                         _state.update { it.copy(activeTopIndex = newIndex) }
                     }
-                }
+                    is ProductIntent.AddToCart -> {
+                        // هنا كتزيد المنتوج للسلة. ممكن مثلا:
+                        val updatedCartCount = _state.value.cartCount + 1
+                        _state.update { it.copy(cartCount = updatedCartCount) }
+
+                        // يمكن تزيد log أو message
+                        Log.d("AddToCart", "Produit ajouté: ${intent.product.name}")
+                    }                }
             }
         }
     }
