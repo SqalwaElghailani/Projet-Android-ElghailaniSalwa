@@ -51,8 +51,7 @@ dependencies {
 
     // OkHttp pour logging
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
-
-
+    implementation(libs.play.services.analytics.impl)
 
 
     val nav_version = "2.8.9"
