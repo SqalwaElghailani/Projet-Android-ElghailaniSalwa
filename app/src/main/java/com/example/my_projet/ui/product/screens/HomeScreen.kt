@@ -1,52 +1,52 @@
 package com.example.my_projet.ui.product.screens
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.my_projet.ui.product.ProductViewModel
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
-import androidx.compose.ui.graphics.Color
-import com.example.my_projet.ui.product.ProductIntent
-import com.example.my_projet.ui.product.component.ProductsList
+import com.example.my_projet.data.Entities.Product
+import com.example.my_projet.ui.product.component.MainHeader
+import com.example.my_projet.ui.product.component.ProductGrid
+import com.example.my_projet.ui.product.component.TopBannerWithGenres
 
 @Composable
-fun HomeScreen(viewModel: ProductViewModel = viewModel(), onNavigateToDetails: (String) -> Unit) {
-    val state by viewModel.state.collectAsState()
-
-    LaunchedEffect(viewModel) {
-        // Call loadProducts() method when the composable is first launched.
-        viewModel.handleIntent(ProductIntent.LoadProducts)
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        when {
-            state.isLoading -> {
-                // Display a Circular loader
-                CircularProgressIndicator(modifier = Modifier.align(CenterHorizontally))
-            }
-
-            state.error != null -> {
-                // Display an error message
-                Text(text = "Error: ${state.error}", color = Color.Red)
-            }
-
-            else -> {
-                // Display products when fetch is success
-                ProductsList(products = state.products, onNavigateToDetails)
-            }
+fun HomeScreen(
+    searchTerm: String,
+    onSearchChange: (String) -> Unit,
+    onSearchSubmit: () -> Unit,
+    cartCount: Int,
+    onNavigateToOrders: () -> Unit,
+    onNavigateToCart: () -> Unit,
+    genres: List<String>,
+    selectedGenre: String?,
+    topProducts: List<Product>,
+    filteredProducts: List<Product>,
+    activeTopIndex: Int,
+    onGenreSelected: (String) -> Unit,
+    onClearGenre: () -> Unit,
+    onNavigateToDetails: (String) -> Unit,
+    onPreviousTop: () -> Unit,
+    onNextTop: () -> Unit
+) {
+    Column {
+        MainHeader(
+            searchTerm = searchTerm,
+            onSearchChange = onSearchChange,
+            onSearchSubmit = onSearchSubmit,
+            cartCount = cartCount,
+            onNavigateToOrders = onNavigateToOrders,
+            onNavigateToCart = onNavigateToCart
+        )
+        if (topProducts.isNotEmpty()) {
+            TopBannerWithGenres(
+                product = topProducts[activeTopIndex],
+                genres = genres,
+                selectedGenre = selectedGenre,
+                onGenreSelected = onGenreSelected,
+                onClearGenre = onClearGenre,
+                onPreviousTop = onPreviousTop,
+                onNextTop = onNextTop
+            )
         }
+
+        ProductGrid(products = filteredProducts, onClick = onNavigateToDetails)
     }
 }

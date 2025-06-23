@@ -17,9 +17,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.my_projet.ui.product.ProductIntent
 import com.example.my_projet.ui.product.ProductViewModel
 import com.example.my_projet.ui.product.component.DetailsScreen
 import com.example.my_projet.ui.product.screens.HomeScreen
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 
 object Routes {
     const val Home = "home"
@@ -30,12 +33,35 @@ object Routes {
 fun AppNavigation(viewModel: ProductViewModel) {
     val navController = rememberNavController()
 
+    val uiState by viewModel.state.collectAsState()
+
     NavHost(navController = navController, startDestination = Routes.Home) {
 
         composable(Routes.Home) {
-            HomeScreen(viewModel, onNavigateToDetails = { productId ->
-                navController.navigate("${Routes.ProductDetails}/$productId")
-            })
+            HomeScreen(
+                searchTerm = uiState.searchTerm,
+                onSearchChange = { newTerm -> viewModel.onSearchChange(newTerm) },
+                onSearchSubmit = { viewModel.onSearchSubmit() },
+                cartCount = uiState.cartCount,
+                onNavigateToOrders = {
+                    // Par exemple navigation vers l'écran des commandes
+                    // navController.navigate("orders")
+                },
+                onNavigateToCart = {
+                    // Par exemple navigation vers le panier
+                    // navController.navigate("cart")
+                },
+                genres = uiState.genres,
+                selectedGenre = uiState.selectedGenre,
+                topProducts = uiState.topProducts,
+                filteredProducts = uiState.filteredProducts,
+                activeTopIndex = uiState.activeTopIndex,
+                onGenreSelected = { genre -> viewModel.sendIntent(ProductIntent.SelectGenre(genre)) },
+                onClearGenre = { viewModel.sendIntent(ProductIntent.ClearGenre) },
+                onNavigateToDetails = { productId -> navController.navigate("${Routes.ProductDetails}/$productId") },
+                onPreviousTop = { viewModel.sendIntent(ProductIntent.PreviousTopProduct) },
+                onNextTop = { viewModel.sendIntent(ProductIntent.NextTopProduct) }
+            )
         }
 
         composable(
@@ -44,24 +70,6 @@ fun AppNavigation(viewModel: ProductViewModel) {
         ) { backStackEntry ->
             val productId = backStackEntry.arguments?.getString("productId") ?: ""
             DetailsScreen(id = productId)
-        }
-    }
-}
-
-/* Deprecated */
-@Composable
-fun HomeScreenDeprecated(onNavigateToDetails: (String) -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(text = "Bienvenue sur HomeScreen")
-        Spacer(modifier = Modifier.height(20.dp))
-        Button(onClick = { onNavigateToDetails("PR1234") }) {
-            Text(text = "Aller aux détails du produit PR1234")
         }
     }
 }
