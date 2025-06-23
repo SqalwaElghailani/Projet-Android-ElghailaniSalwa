@@ -45,8 +45,9 @@ fun ProductItem(product: Product, onNavigateToDetails: (String) -> Unit) {
                     .height(150.dp)
             )
 
-            Text(text = "Title: ${product.name}")
-            Text(text = "Description: ${product.description}")
+            Text(text = " ${product.name}")
+            Text(text = " ${product.price}")
+//            Text(text = "Description: ${product.description}")
             Button(onClick = { onNavigateToDetails(product.id.toString()) }) {
                 Text(text = "Plus de détails...")
             }
