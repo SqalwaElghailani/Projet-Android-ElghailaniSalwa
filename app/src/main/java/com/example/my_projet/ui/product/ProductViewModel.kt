@@ -66,7 +66,9 @@ class ProductViewModel @Inject constructor(
 
                         // يمكن تزيد log أو message
                         Log.d("AddToCart", "Produit ajouté: ${intent.product.name}")
-                    }                }
+                    } is ProductIntent.SetSelectedProducts -> {
+                    _state.update { it.copy(selectedProducts = intent.products) }
+                }               }
             }
         }
     }

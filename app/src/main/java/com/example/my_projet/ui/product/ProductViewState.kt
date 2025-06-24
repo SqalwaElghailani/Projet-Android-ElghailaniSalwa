@@ -12,8 +12,8 @@ data class ProductViewState (
     val activeTopIndex: Int = 0,
     val genres: List<String> = emptyList(),
     val selectedGenre: String? = null,
-    val error: String? = null
-
+    val error: String? = null,
+    val selectedProducts: List<Product> = emptyList()
 
 
 )

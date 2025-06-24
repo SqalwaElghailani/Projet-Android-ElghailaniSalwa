@@ -9,4 +9,5 @@ sealed class ProductIntent {
     object ClearGenre : ProductIntent()
     object PreviousTopProduct : ProductIntent()
     object NextTopProduct : ProductIntent()
+    data class SetSelectedProducts(val products: List<Product>) : ProductIntent()
 }
