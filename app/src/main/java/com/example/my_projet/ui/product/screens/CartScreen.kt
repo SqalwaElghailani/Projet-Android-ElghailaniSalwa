@@ -1,46 +1,51 @@
 package com.example.my_projet.ui.product.screens
-// Compose UI
+
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-
-// Project-specific
+import com.example.my_projet.R
 import com.example.my_projet.data.Api.readCartItems
 import com.example.my_projet.data.Api.removeFromCart
 import com.example.my_projet.data.Entities.CartItem
-
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.res.painterResource
-import com.example.my_projet.R
 import com.example.my_projet.data.Entities.Product
-import android.util.Log
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 
 @Composable
 fun CartScreen(
     filteredProducts: List<Product>,
     onBack: () -> Unit,
-    onOrder: (List<Product>) -> Unit // باش نمشيو لصفحة الكوموند
+    onOrder: (List<Product>) -> Unit
 ) {
     val context = LocalContext.current
-    val items = remember { mutableStateListOf<CartItem>() }
-    val selectedProducts = remember { mutableStateListOf<Product>() }
+    val userId = 1 // ID utilisateur
 
-    // Load items from JSON
+    val items = remember { mutableStateListOf<CartItem>() }
+    val selectedProducts = remember { mutableStateMapOf<String, Boolean>() }
+
+    // Charger les éléments du panier
     LaunchedEffect(Unit) {
         items.clear()
         val loadedItems = readCartItems(context)
-        Log.d("CartScreen", "Loaded ${loadedItems.size} items from cart JSON")
         items.addAll(loadedItems)
+        Log.d("CartScreen", "Chargé ${loadedItems.size} éléments depuis cart.json")
     }
 
-    // Total Price
-    val totalPrice = selectedProducts.sumOf { it.price }
-    Log.d("CartScreen", "Total price recalculated: $totalPrice MAD")
+    // Calculer le total
+    val totalPrice = items
+        .filter { selectedProducts[it.productId] == true }
+        .mapNotNull { cartItem ->
+            filteredProducts.find { it.id.toString() == cartItem.productId }?.price
+        }.sum()
 
     Column(
         modifier = Modifier
@@ -50,70 +55,89 @@ fun CartScreen(
         Text("Mon Panier", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(16.dp))
 
-        items.forEach { item ->
-            val product = filteredProducts.find { it.id.toString() == item.productId }
+        if (items.isEmpty()) {
+            Text("Votre panier est vide.")
+        } else {
+            LazyColumn(modifier = Modifier.weight(1f)) {
+                items(items.toList(), key = { it.productId }) { item ->
+                    val product = filteredProducts.find { it.id.toString() == item.productId }
+                    if (product != null) {
+                        val isSelected = selectedProducts[item.productId] ?: false
 
-            if (product != null) {
-                var isSelected by remember { mutableStateOf(false) }
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 6.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(8.dp)
+                            ) {
+                                Checkbox(
+                                    checked = isSelected,
+                                    onCheckedChange = {
+                                        selectedProducts[item.productId] = it
+                                        Log.d("CartScreen", if (it) "Sélectionné: ${product.name}" else "Désélectionné: ${product.name}")
+                                    }
+                                )
 
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(8.dp)
-                    ) {
-                        Checkbox(
-                            checked = isSelected,
-                            onCheckedChange = {
-                                isSelected = it
-                                if (it) {
-                                    selectedProducts.add(product)
-                                    Log.d("CartScreen", "Selected product: ${product.name}")
-                                } else {
-                                    selectedProducts.remove(product)
-                                    Log.d("CartScreen", "Deselected product: ${product.name}")
+                                val imageRes = context.resources.getIdentifier(
+                                    product.imageUrl, "drawable", context.packageName
+                                )
+
+                                Image(
+                                    painter = painterResource(id = if (imageRes != 0) imageRes else R.drawable.ml),
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .size(60.dp)
+                                        .padding(end = 8.dp)
+                                )
+
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text("Nom: ${product.name}")
+                                    Text("Prix: ${product.price} MAD")
+                                    Text("Ajouté le: ${item.dateAdded}")
+                                }
+
+                                IconButton(
+                                    onClick = {
+                                        items.remove(item)
+                                        selectedProducts.remove(item.productId)
+                                        removeFromCart(context, item.productId, userId)
+                                        Log.d("CartScreen", "Supprimé: ${product.name}")
+                                    },
+                                    modifier = Modifier.padding(start = 8.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = "Supprimer produit",
+                                        tint = MaterialTheme.colorScheme.error
+                                    )
                                 }
                             }
-                        )
-
-                        val imageRes = context.resources.getIdentifier(
-                            product.imageUrl, "drawable", context.packageName
-                        )
-
-                        Image(
-                            painter = painterResource(id = if (imageRes != 0) imageRes else R.drawable.ml),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(60.dp)
-                                .padding(end = 8.dp)
-                        )
-
-                        Column {
-                            Text("Nom: ${product.name}")
-                            Text("Prix: ${product.price} MAD")
-                            Text("Ajouté le: ${item.dateAdded}")
                         }
                     }
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Total + bouton commander
         Text("Total: $totalPrice MAD", style = MaterialTheme.typography.bodyLarge)
         Spacer(modifier = Modifier.height(12.dp))
 
         Button(
             onClick = {
-                Log.d("CartScreen", "Commander clicked with ${selectedProducts.size} products selected")
-                onOrder(selectedProducts)
+                val selected = items.mapNotNull { item ->
+                    if (selectedProducts[item.productId] == true) {
+                        filteredProducts.find { it.id.toString() == item.productId }
+                    } else null
+                }
+                Log.d("CartScreen", "Commander ${selected.size} produits")
+                onOrder(selected)
             },
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            enabled = selectedProducts.isNotEmpty()
+            enabled = selectedProducts.values.any { it }
         ) {
             Text("Commander")
         }

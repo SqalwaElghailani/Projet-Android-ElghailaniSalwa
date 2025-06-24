@@ -44,7 +44,7 @@ fun CardApi(context: Context, item: CartItem) {
 
 }
 
-fun removeFromCart(context: Context, productId: String, userId: String) {
+fun removeFromCart(context: Context, productId: String, userId: Int) {
     val file = File(context.filesDir, "cart.json")
     val gson = Gson()
     val itemType = object : TypeToken<MutableList<CartItem>>() {}.type
@@ -56,7 +56,7 @@ fun removeFromCart(context: Context, productId: String, userId: String) {
             gson.fromJson(file.readText(), itemType) ?: mutableListOf()
 
         val updatedItems = items.filterNot {
-            it.productId == productId && it.userId == userId
+            it.productId == productId && it.userId.toInt() == userId
         }
 
         file.writeText(gson.toJson(updatedItems))
@@ -65,6 +65,9 @@ fun removeFromCart(context: Context, productId: String, userId: String) {
         Log.e("removeFromCart", "Erreur: ${e.message}")
     }
 }
+
+
+
 fun readCartItems(context: Context): List<CartItem> {
     val file = File(context.filesDir, "cart.json")
     val gson = Gson()

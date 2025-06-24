@@ -63,7 +63,7 @@ fun ProductItem(
             val currentDate = sdf.format(Date())
 
             val item = CartItem(
-                userId = "userId",
+                userId = 1,
                 productId = product.id.toString(),
                 productName = product.name.toString(),
                 productPrice = product.price.toString(),
