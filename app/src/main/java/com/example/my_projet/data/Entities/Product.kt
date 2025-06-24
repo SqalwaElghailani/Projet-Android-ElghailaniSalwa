@@ -15,7 +15,7 @@ import com.google.gson.annotations.SerializedName
         val description: String? = null,
 
         @SerializedName("price")
-        val price: Int? = null,
+        val price: Int ,
 
         @SerializedName("quantity")
         val quantity: Int? = null,
@@ -36,5 +36,6 @@ import com.google.gson.annotations.SerializedName
         val chapters: Int? = null,
 
         @SerializedName("fullSummary")
-        val fullSummary: String? = null
+        val fullSummary: String? = null,
+
             )
