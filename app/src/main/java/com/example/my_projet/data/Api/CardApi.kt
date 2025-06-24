@@ -44,3 +44,41 @@ fun CardApi(context: Context, item: CartItem) {
 
 }
 
+fun removeFromCart(context: Context, productId: String, userId: String) {
+    val file = File(context.filesDir, "cart.json")
+    val gson = Gson()
+    val itemType = object : TypeToken<MutableList<CartItem>>() {}.type
+
+    if (!file.exists()) return
+
+    try {
+        val items: MutableList<CartItem> =
+            gson.fromJson(file.readText(), itemType) ?: mutableListOf()
+
+        val updatedItems = items.filterNot {
+            it.productId == productId && it.userId == userId
+        }
+
+        file.writeText(gson.toJson(updatedItems))
+        Log.d("removeFromCart", "Produit supprimé avec succès")
+    } catch (e: Exception) {
+        Log.e("removeFromCart", "Erreur: ${e.message}")
+    }
+}
+fun readCartItems(context: Context): List<CartItem> {
+    val file = File(context.filesDir, "cart.json")
+    val gson = Gson()
+    val itemType = object : TypeToken<List<CartItem>>() {}.type
+
+    return if (file.exists()) {
+        try {
+            val json = file.readText()
+            gson.fromJson(json, itemType) ?: emptyList()
+        } catch (e: Exception) {
+            Log.e("CardApi", "Error reading cart items: ${e.message}")
+            emptyList()
+        }
+    } else emptyList()
+}
+
+
