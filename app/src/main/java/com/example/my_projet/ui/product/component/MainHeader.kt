@@ -1,5 +1,6 @@
 package com.example.my_projet.ui.product.component
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
+import androidx.navigation.NavController
 
 
 @Composable
@@ -30,7 +32,10 @@ fun MainHeader(
     onSearchSubmit: () -> Unit,
     cartCount: Int,
     onNavigateToOrders: () -> Unit,
-    onNavigateToCart: () -> Unit
+    onNavigateToCart: () -> Unit,
+    navController: NavController,
+    userId: Int = 1
+
 ) {
     Column(
         modifier = Modifier
@@ -56,12 +61,15 @@ fun MainHeader(
             )
 
             Row {
-                TextButton(onClick = onNavigateToOrders) {
+                TextButton(onClick =  {navController.navigate("orders/$userId") }) {
                     Text("Mes Commandes")
                 }
 
                 Box {
-                    IconButton(onClick = onNavigateToCart) {
+                    IconButton(onClick = {
+                        Log.d("NAVIGATION", "Panier clicked!")
+                        onNavigateToCart()
+                    }) {
                         Icon(
                             imageVector = Icons.Default.ShoppingCart,
                             contentDescription = "Panier"

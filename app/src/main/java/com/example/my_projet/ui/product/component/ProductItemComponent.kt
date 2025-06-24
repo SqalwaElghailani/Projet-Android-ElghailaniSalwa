@@ -65,6 +65,9 @@ fun ProductItem(
             val item = CartItem(
                 userId = "userId",
                 productId = product.id.toString(),
+                productName = product.name.toString(),
+                productPrice = product.price.toString(),
+                imageUrl = product.imageUrl.toString(),
                 dateAdded = currentDate
             )
             // Button for Add to Cart
