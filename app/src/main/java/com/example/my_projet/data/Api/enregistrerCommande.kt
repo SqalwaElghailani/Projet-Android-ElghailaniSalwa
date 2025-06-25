@@ -11,26 +11,26 @@ fun enregistrerCommande(context: Context, commande: Order) {
     val gson = Gson()
     val file = File(context.filesDir, "commandes.json")
 
-    // Lire les commandes existantes
     val commandesExistantes: MutableList<Order> = if (file.exists()) {
         val json = file.readText()
         if (json.isNotBlank()) {
             val type = object : TypeToken<MutableList<Order>>() {}.type
             gson.fromJson(json, type)
-        } else {
-            mutableListOf()
-        }
-    } else {
-        mutableListOf()
-    }
+        } else mutableListOf()
+    } else mutableListOf()
 
-    // Ajouter la nouvelle commande
-    commandesExistantes.add(commande)
+    // Générer automatiquement un nouvel ID basé sur le plus grand existant
+    val newId = (commandesExistantes.maxOfOrNull { it.id } ?: 0) + 1
+    val commandeAvecId = commande.copy(id = newId)
 
-    // Réécrire le fichier
+    commandesExistantes.add(commandeAvecId)
+
     val jsonFinal = gson.toJson(commandesExistantes)
     file.writeText(jsonFinal)
+
+    Log.d("Commande", "Commande enregistrée avec ID: $newId")
 }
+
 fun lireCommandesParUser(context: Context, userId: Int): List<Order> {
     val gson = Gson()
     val file = File(context.filesDir, "commandes.json")
@@ -49,5 +49,22 @@ fun lireCommandesParUser(context: Context, userId: Int): List<Order> {
         }
     } else {
         emptyList()
+    }
+}
+fun supprimerCommandeParId(context: Context, orderId: Int) {
+    val gson = Gson()
+    val file = File(context.filesDir, "commandes.json")
+
+    if (file.exists()) {
+        val json = file.readText()
+        val type = object : TypeToken<MutableList<Order>>() {}.type
+        val commandes: MutableList<Order> = gson.fromJson(json, type)
+
+        val nouvellesCommandes = commandes.filter { it.id != orderId }
+        file.writeText(gson.toJson(nouvellesCommandes))
+
+        Log.d("SupprimerCommande", "Commande avec ID $orderId supprimée.")
+    } else {
+        Log.w("SupprimerCommande", "Fichier commandes.json non trouvé.")
     }
 }

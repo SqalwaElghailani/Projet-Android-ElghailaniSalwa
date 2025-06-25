@@ -16,7 +16,8 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.example.my_projet.data.Api.*
-
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 
 @Composable
 fun OrderListScreen(
@@ -45,21 +46,52 @@ fun OrderListScreen(
             Log.d("OrderListScreen", "Aucune commande trouvée pour userId=$userId")
         } else {
             orders.forEach { order ->
-                Card(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)) {
-                    Column(modifier = Modifier.padding(8.dp)) {
-                        Text("Commande - Total: ${order.totalPrice} MAD")
-                        Text("Adresse: ${order.address}")
-                        Text("Mode de paiement: ${order.paymentMethod}")
-                        Text("Items:")
-                        order.items.forEach { item ->
-                            Text("- ${item.productName} x${item.quantity}, Chapitres: ${item.chapters.joinToString()}")
-                            Log.d("OrderListScreen", "Item: ${item.productName}, qty=${item.quantity}, chapitres=${item.chapters.joinToString()}")
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.Top,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    ) {
+                        // 👉 الجزء ديال المعلومات
+                        Column(
+                            modifier = Modifier.weight(1f) // ياخذ المساحة الكاملة الممكنة
+                        ) {
+                            Text("la date: ${order.date} ")
+                            Text("Adresse: ${order.address}")
+                            Text("Telephone: ${order.phone}")
+                            Text("Prix Total: ${order.totalPrice} MAD")
+                            Text("Status: ${order.status}")
+                            Text("Mode de paiement: ${order.paymentMethod}")
+                            Text("Items:")
+                            order.items.forEach { item ->
+                                Text("- ${item.productName} x${item.quantity}, Chapitres: ${item.chapters.joinToString()}")
+                            }
+                        }
+
+                        // 👉 أيقونة الحذف بلون أحمر
+                        IconButton(
+                            onClick = {
+                                supprimerCommandeParId(context, order.id)
+                                orders = orders.filter { it.id != order.id }
+                            },
+                            modifier = Modifier.align(Alignment.Top)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Supprimer",
+                                tint = MaterialTheme.colorScheme.error
+                            )
                         }
                     }
                 }
+
             }
+
         }
 
         Spacer(modifier = Modifier.height(16.dp))

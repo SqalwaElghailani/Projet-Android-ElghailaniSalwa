@@ -29,8 +29,6 @@ fun CommandeScreen(
     var address by remember { mutableStateOf(TextFieldValue("")) }
     var paymentMode by remember { mutableStateOf("") }
 
-    Log.d("CommandeScreen", "Screen started with ${selectedProducts.size} selected products")
-
     val productStates = remember {
         selectedProducts.associate { product ->
             val lastChapter = product.chapters ?: 1
@@ -44,7 +42,7 @@ fun CommandeScreen(
 
     val totalPrice by remember {
         derivedStateOf {
-            val total = productStates.values.sumOf {
+            productStates.values.sumOf {
                 val base = it.product.price
                 val quantity = it.quantity.value
                 val chapters = it.selectedChapters.value.size
@@ -54,8 +52,6 @@ fun CommandeScreen(
                 }
                 total
             }
-            Log.d("CommandeScreen", "Total price recalculated: $total")
-            total
         }
     }
 
@@ -64,7 +60,7 @@ fun CommandeScreen(
 
         productStates.values.forEach { sel ->
             Column(modifier = Modifier.fillMaxWidth()) {
-                Text("Produit: ${sel.product.name}", style = MaterialTheme.typography.bodyLarge)
+                Text("Produit: ${sel.product.name}")
                 Text("Prix unitaire: ${sel.product.price} MAD")
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -78,7 +74,7 @@ fun CommandeScreen(
                     }) { Text("+") }
                 }
 
-                Text("Chapitres (max ${sel.product.chapters}):")
+                Text("Chapitres:")
                 Row {
                     (1..(sel.product.chapters ?: 1)).forEach { chNum ->
                         FilterChip(
@@ -98,31 +94,16 @@ fun CommandeScreen(
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        OutlinedTextField(
-            value = phone,
-            onValueChange = { phone = it },
-            label = { Text("Téléphone") }
-        )
+        OutlinedTextField(value = phone, onValueChange = { phone = it }, label = { Text("Téléphone") })
+        OutlinedTextField(value = address, onValueChange = { address = it }, label = { Text("Adresse") })
 
-        OutlinedTextField(
-            value = address,
-            onValueChange = { address = it },
-            label = { Text("Adresse") }
-        )
-
-        Text("Total: $totalPrice MAD", style = MaterialTheme.typography.bodyLarge)
+        Text("Total: $totalPrice MAD")
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            RadioButton(
-                selected = paymentMode == "en_ligne",
-                onClick = { paymentMode = "en_ligne" }
-            )
+            RadioButton(selected = paymentMode == "Paiement en ligne", onClick = { paymentMode = "Paiement en ligne" })
             Text("Paiement en ligne")
             Spacer(modifier = Modifier.width(16.dp))
-            RadioButton(
-                selected = paymentMode == "a_la_livraison",
-                onClick = { paymentMode = "a_la_livraison" }
-            )
+            RadioButton(selected = paymentMode == "Paiement à la livraison", onClick = { paymentMode = "Paiement à la livraison" })
             Text("Paiement à la livraison")
         }
 
@@ -139,7 +120,6 @@ fun CommandeScreen(
                 }
 
                 val currentDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
-
                 val order = Order(
                     userId = userId,
                     phone = phone.text,
@@ -164,6 +144,7 @@ fun CommandeScreen(
     }
 }
 
+
 // ======================== Data Classes ========================
 
 data class ProductSelection(
@@ -181,6 +162,7 @@ data class OrderItem(
 )
 
 data class Order(
+    val id: Int = 0,
     val userId: Int,
     val phone: String,
     val address: String,
