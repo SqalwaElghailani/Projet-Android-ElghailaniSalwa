@@ -3,18 +3,13 @@ package com.example.my_projet.ui.product.component
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -24,18 +19,20 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 
-
 @Composable
 fun MainHeader(
     searchTerm: String,
     onSearchChange: (String) -> Unit,
     onSearchSubmit: () -> Unit,
     cartCount: Int,
+    isUserLoggedIn: Boolean,
+    onLogout: () -> Unit,
     onNavigateToOrders: () -> Unit,
     onNavigateToCart: () -> Unit,
+    onNavigateToLogin: () -> Unit,
+    onNavigateToAccount: () -> Unit,
     navController: NavController,
-    userId: Int = 1
-
+    userId: Int
 ) {
     Column(
         modifier = Modifier
@@ -43,12 +40,13 @@ fun MainHeader(
             .background(Color.White)
             .padding(16.dp)
     ) {
-        // Ligne dyal logo + actions
+        // Logo + Menu
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            // 🌟 Logo
             Text(
                 text = buildAnnotatedString {
                     append("Manga")
@@ -60,26 +58,22 @@ fun MainHeader(
                 fontWeight = FontWeight.Bold
             )
 
-            Row {
-                TextButton(onClick =  {navController.navigate("orders/$userId") }) {
-                    Text("Mes Commandes")
+            // 🧭 Menu
+            Row(verticalAlignment = Alignment.CenterVertically) {
+
+                IconButton(onClick = onNavigateToOrders) {
+                    Icon(Icons.Default.List, contentDescription = "Mes Commandes")
                 }
 
                 Box {
-                    IconButton(onClick = {
-                        Log.d("NAVIGATION", "Panier clicked!")
-                        onNavigateToCart()
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.ShoppingCart,
-                            contentDescription = "Panier"
-                        )
+                    IconButton(onClick = onNavigateToCart) {
+                        Icon(Icons.Default.ShoppingCart, contentDescription = "Panier")
                     }
                     if (cartCount > 0) {
                         Box(
                             modifier = Modifier
                                 .size(16.dp)
-                                .background(Color(0xFFFF6B00), shape = CircleShape)
+                                .background(Color.Red, shape = CircleShape)
                                 .align(Alignment.TopEnd)
                         ) {
                             Text(
@@ -91,19 +85,39 @@ fun MainHeader(
                         }
                     }
                 }
+
+                IconButton(onClick = {
+                    if (isUserLoggedIn) {
+                        onNavigateToAccount()
+                    } else {
+                        onNavigateToLogin()
+                    }
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Compte"
+                    )
+                }
+
+                if (isUserLoggedIn) {
+                    IconButton(onClick = {
+                        onLogout()
+                    }) {
+                        Icon(Icons.Default.Logout, contentDescription = "Déconnexion", tint = Color.Red)
+                    }
+                }
             }
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // La barre de recherche - ligne séparée et horizontale
+        // 🔍 Barre de recherche
         TextField(
             value = searchTerm,
             onValueChange = onSearchChange,
-            placeholder = { Text("Rechercher des mangas, tomes, figurines...") },
+            placeholder = { Text("Rechercher des mangas, tomes...") },
             singleLine = true,
-            modifier = Modifier.fillMaxWidth(),
-            // Tu peux ajouter un icône de recherche si tu veux ici
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }

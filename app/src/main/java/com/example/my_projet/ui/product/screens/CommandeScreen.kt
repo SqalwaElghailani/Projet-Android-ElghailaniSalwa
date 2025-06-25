@@ -1,5 +1,6 @@
 package com.example.my_projet.ui.product.screens
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -20,11 +21,16 @@ fun CommandeScreen(
     selectedProducts: List<Product>,
     onBack: () -> Unit,
     onConfirm: (Order) -> Unit,
-    navController: NavController,
-    userId: Int = 1
+    navController: NavController
 ) {
-    val status = "en attend"
     val context = LocalContext.current
+
+    // ✅ قراءة userId من SharedPreferences
+    val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+    val userId = prefs.getInt("user_id", -1)
+
+    val status = "en attend"
+
     var phone by remember { mutableStateOf(TextFieldValue("")) }
     var address by remember { mutableStateOf(TextFieldValue("")) }
     var paymentMode by remember { mutableStateOf("") }
@@ -143,6 +149,7 @@ fun CommandeScreen(
         }
     }
 }
+
 
 
 // ======================== Data Classes ========================

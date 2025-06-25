@@ -2,7 +2,6 @@ package com.example.my_projet.ui.product.screens
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -32,28 +31,43 @@ fun HomeScreen(
     onPreviousTop: () -> Unit,
     onNextTop: () -> Unit,
     onAddToCart: (Product) -> Unit,
-    navController: NavController,        // ✅ أضف هذا
-    userId: Int = 1
+    navController: NavController,
+    userId: Int = 1,
+    isUserLoggedIn: Boolean = true,
+    onLogout: () -> Unit,
+    onNavigateToLogin: () -> Unit,
+    onNavigateToAccount: () -> Unit
 ) {
-    Column (
-            modifier = Modifier
-                .padding(start = 4.dp, end = 4.dp, top = 20.dp, bottom = 20.dp)  // تقدر تحكم في البادينغ من هنا
-        ) {
+    Column(
+        modifier = Modifier.padding(start = 4.dp, end = 4.dp, top = 20.dp, bottom = 20.dp)
+    ) {
         MainHeader(
             searchTerm = searchTerm,
             onSearchChange = onSearchChange,
             onSearchSubmit = onSearchSubmit,
             cartCount = cartCount,
+            isUserLoggedIn = isUserLoggedIn,
             onNavigateToOrders = onNavigateToOrders,
             onNavigateToCart = {
                 Log.d("NAVIGATION", "Navigating to cart screen from HomeScreen")
                 onNavigateToCart()
             },
+            onLogout = {
+                Log.d("AUTH", "Déconnexion depuis HomeScreen...")
+                onLogout() // كتنفذ تسجيل الخروج من AppNavigation
+            },
+            onNavigateToLogin = {
+                Log.d("AUTH", "Navigating to Login from HomeScreen...")
+                onNavigateToLogin()
+            },
+            onNavigateToAccount = {
+                Log.d("AUTH", "Navigating to Account from HomeScreen...")
+                onNavigateToAccount()
+            },
             navController = navController,
             userId = userId
-
-
         )
+
         if (topProducts.isNotEmpty()) {
             TopBannerWithGenres(
                 product = topProducts[activeTopIndex],
@@ -71,6 +85,5 @@ fun HomeScreen(
             onClick = onNavigateToDetails,
             onAddToCart = onAddToCart
         )
-
     }
 }

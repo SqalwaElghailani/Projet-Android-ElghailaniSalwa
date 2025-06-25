@@ -1,9 +1,14 @@
 package com.example.my_projet.ui.product.component
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,6 +30,12 @@ import com.example.my_projet.data.Entities.Product
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontStyle
 
 @Composable
 fun ProductItem(
@@ -33,6 +44,8 @@ fun ProductItem(
     onAddToCart: (Product) -> Unit
 ) {
     val context = LocalContext.current
+    val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+    val userId = prefs.getInt("user_id", -1)
 
     val imageResId = context.resources.getIdentifier(
         product.imageUrl, "drawable", context.packageName
@@ -41,44 +54,94 @@ fun ProductItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .shadow(4.dp, RoundedCornerShape(8.dp)),
-        shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            .padding(8.dp)
+            .shadow(4.dp, RoundedCornerShape(12.dp)),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
-            // Image clickable for details
-            Image(
-                painter = painterResource(id = if (imageResId != 0) imageResId else R.drawable.ml),
-                contentDescription = null,
+
+
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(150.dp)
-                    .clickable { onNavigateToDetails(product.id.toString()) }, // <-- ici
-            )
+                    .height(100.dp)
+                    .clickable { onNavigateToDetails(product.id.toString()) }
+            ) {
 
-            Text(text = " ${product.name}")
-            Text(text = " ${product.price}")
-            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-            val currentDate = sdf.format(Date())
+                Image(
+                    painter = painterResource(id = if (imageResId != 0) imageResId else R.drawable.ml),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize()
+                )
+                Text(
+                    text = "${product.chapters} chapitres",
+                    modifier = Modifier
+                        .align(androidx.compose.ui.Alignment.BottomEnd)
+                        .padding(4.dp)
 
-            val item = CartItem(
-                userId = 1,
-                productId = product.id.toString(),
-                productName = product.name.toString(),
-                productPrice = product.price.toString(),
-                imageUrl = product.imageUrl.toString(),
-                dateAdded = currentDate
-            )
-            // Button for Add to Cart
-            Button(onClick = { CardApi(context, item) }) {
-                Text(text = "Ajouter au panier")
+                        .padding(horizontal = 6.dp, vertical = 2.dp),
+                    color = androidx.compose.ui.graphics.Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontStyle = FontStyle.Italic
+                )
 
+            }
+
+                Text(
+                    text = "${product.name}",
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+
+
+                androidx.compose.foundation.layout.Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween
+                ) {
+                    // زر بالأيقونة
+                    Button(
+                        onClick = {
+                            if (userId == -1) {
+                                Toast.makeText(
+                                    context,
+                                    "Veuillez vous connecter pour ajouter au panier.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                val sdf =
+                                    SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                                val currentDate = sdf.format(Date())
+                                val item = CartItem(
+                                    userId = userId,
+                                    productId = product.id.toString(),
+                                    productName = product.name.toString(),
+                                    productPrice = product.price.toString(),
+                                    imageUrl = product.imageUrl.toString(),
+                                    dateAdded = currentDate
+                                )
+                                CardApi(context, item)
+                            }
+                        },
+                        modifier = Modifier.height(30.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = androidx.compose.ui.graphics.Color(0xFFFF9800),
+                            contentColor = androidx.compose.ui.graphics.Color.White
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ShoppingCart,
+                            contentDescription = "Ajouter au panier"
+                        )
+                    }
+
+
+                    Text(
+                        text = "${product.price} MAD",
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                }
             }
         }
     }
-
-
-
-
-}

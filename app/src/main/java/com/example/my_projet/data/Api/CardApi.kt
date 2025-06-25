@@ -69,6 +69,8 @@ fun removeFromCart(context: Context, productId: String, userId: Int) {
 
 
 fun readCartItems(context: Context): List<CartItem> {
+    Log.d("readCartItems", "bbbbbbbbbbbbbbbbb: ")
+
     val file = File(context.filesDir, "cart.json")
     val gson = Gson()
     val itemType = object : TypeToken<List<CartItem>>() {}.type
@@ -76,6 +78,7 @@ fun readCartItems(context: Context): List<CartItem> {
     return if (file.exists()) {
         try {
             val json = file.readText()
+            Log.d("readCartItems", "Reading file content: $json")
             gson.fromJson(json, itemType) ?: emptyList()
         } catch (e: Exception) {
             Log.e("CardApi", "Error reading cart items: ${e.message}")
