@@ -26,12 +26,9 @@ fun GenresList(
 ) {
     var startIndex by remember { mutableStateOf(0) }
 
-    // دائما "Tous" فالأول (ماكيحسبش مع rotate)
     val visibleGenres = if (selectedGenre == null || selectedGenre == "Tous") {
-        // كيظهر Tous + أول 3 genres
         genres.take(3)
     } else {
-        // كيظهرو 3 genres ابتداء من startIndex
         List(3) { i ->
             genres[(startIndex + i) % genres.size]
         }
@@ -43,7 +40,6 @@ fun GenresList(
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        // عرض Tous دايما فالأول
         val isTousSelected = selectedGenre == null || selectedGenre == "Tous"
         Box(
             modifier = Modifier
@@ -65,7 +61,6 @@ fun GenresList(
             )
         }
 
-        // عرض باقي genres
         visibleGenres.forEach { genre ->
             val isSelected = genre == selectedGenre
             Box(

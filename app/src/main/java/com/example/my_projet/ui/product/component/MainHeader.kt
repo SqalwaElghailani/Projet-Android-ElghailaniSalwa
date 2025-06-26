@@ -31,43 +31,51 @@ fun MainHeader(
     onNavigateToCart: () -> Unit,
     onNavigateToLogin: () -> Unit,
     onNavigateToAccount: () -> Unit,
+    onNavigateToFavorites: () -> Unit,
     navController: NavController,
-    userId: Int
+    userId: Int,
+    onNavigateToHome: () -> Unit
 ) {
+    val currentRoute = navController.currentBackStackEntry?.destination?.route
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
-            .padding(16.dp)
+            .padding(30.dp)
     ) {
-        // Logo + Menu
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // 🌟 Logo
-            Text(
-                text = buildAnnotatedString {
-                    append("Manga")
-                    withStyle(style = SpanStyle(color = Color(0xFFFF6B00))) {
-                        append("Lighter")
-                    }
-                },
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
 
-            // 🧭 Menu
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            IconButton(onClick = onNavigateToHome) {
+                Icon(
+                    imageVector = Icons.Default.Home,
+                    contentDescription = "Accueil",
+                    tint = if (currentRoute == "home") Color(0xFFFF6B00) else Color.Black
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
 
-                IconButton(onClick = onNavigateToOrders) {
-                    Icon(Icons.Default.List, contentDescription = "Mes Commandes")
+                IconButton(onClick = onNavigateToFavorites) {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = "Favoris",
+                        tint = if (currentRoute == "favorites") Color(0xFFFF6B00) else Color.Black
+                    )
                 }
-
                 Box {
                     IconButton(onClick = onNavigateToCart) {
-                        Icon(Icons.Default.ShoppingCart, contentDescription = "Panier")
+                        Icon(
+                            Icons.Default.ShoppingCart,
+                            contentDescription = "Panier",
+                            tint = if (currentRoute == "cart") Color(0xFFFF6B00) else Color.Black
+                        )
                     }
                     if (cartCount > 0) {
                         Box(
@@ -85,39 +93,62 @@ fun MainHeader(
                         }
                     }
                 }
+                IconButton(onClick = onNavigateToOrders) {
+                    Icon(
+                        Icons.Default.Receipt,
+                        contentDescription = "Mes Commandes",
+                        tint = if (currentRoute?.startsWith("orders/$userId")== true) Color(0xFFFF6B00) else Color.Black
+                    )
+                }
 
                 IconButton(onClick = {
-                    if (isUserLoggedIn) {
-                        onNavigateToAccount()
-                    } else {
-                        onNavigateToLogin()
-                    }
+                    if (isUserLoggedIn) onNavigateToAccount()
+                    else onNavigateToLogin()
                 }) {
                     Icon(
                         imageVector = Icons.Default.Person,
-                        contentDescription = "Compte"
+                        contentDescription = "Compte",
+                        tint = if (currentRoute == "account") Color(0xFFFF6B00) else Color.Black
                     )
                 }
 
                 if (isUserLoggedIn) {
-                    IconButton(onClick = {
-                        onLogout()
-                    }) {
-                        Icon(Icons.Default.Logout, contentDescription = "Déconnexion", tint = Color.Red)
+                    IconButton(onClick = { onLogout() }) {
+                        Icon(
+                            Icons.Default.Logout,
+                            contentDescription = "Déconnexion",
+                            tint = Color.Red
+                        )
                     }
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // 🔍 Barre de recherche
-        TextField(
-            value = searchTerm,
-            onValueChange = onSearchChange,
-            placeholder = { Text("Rechercher des mangas, tomes...") },
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth()
-        )
     }
+}
+
+
+        //Spacer(modifier = Modifier.height(12.dp))
+
+//        TextField(
+//            value = searchTerm,
+//            onValueChange = onSearchChange,
+//            placeholder = { Text("Rechercher des mangas, tomes...") },
+//            singleLine = true,
+//            modifier = Modifier.fillMaxWidth()
+//        )
+
+@Composable
+fun SearchBar(
+    searchTerm: String,
+    onSearchChange: (String) -> Unit,
+    onSearchSubmit: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    TextField(
+        value = searchTerm,
+        onValueChange = onSearchChange,
+        placeholder = { Text("Rechercher des mangas, tomes...") },
+        singleLine = true,
+        modifier = modifier,
+    )
 }

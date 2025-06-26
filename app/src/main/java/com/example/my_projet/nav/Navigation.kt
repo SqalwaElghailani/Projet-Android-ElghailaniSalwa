@@ -2,6 +2,8 @@ package com.example.my_projet.nav
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -20,7 +22,9 @@ import com.example.my_projet.ui.product.screens.OrderListScreen
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import com.example.my_projet.ui.product.screens.AccountScreen
+import com.example.my_projet.ui.product.screens.FavoritesScreen
 import com.example.my_projet.ui.product.screens.LoginScreen
 import com.example.my_projet.ui.product.screens.RegisterScreen
 
@@ -96,9 +100,48 @@ fun AppNavigation(viewModel: ProductViewModel) {
             )
         }
 
-        composable("${Routes.ProductDetails}/{productId}", arguments = listOf(navArgument("productId") { type = NavType.StringType })) {
-            val productId = it.arguments?.getString("productId") ?: ""
-            DetailsScreen(id = productId)
+        composable(
+            route = "${Routes.ProductDetails}/{productId}",
+            arguments = listOf(navArgument("productId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val productId = backStackEntry.arguments?.getString("productId") ?: ""
+            val product = uiState.products.find { it.id.toString() == productId }
+
+            if (product != null) {
+                DetailsScreen(product = product,
+                        searchTerm = uiState.searchTerm,
+                    onSearchChange = { viewModel.onSearchChange(it) },
+                    onSearchSubmit = { viewModel.onSearchSubmit() },
+                    cartCount = uiState.cartCount,
+                    onNavigateToOrders = {
+                        if (isUserLoggedIn && userId != -1) {
+                            navController.navigate("orders/$userId")
+                        } else {
+                            navController.navigate("login")
+                        }
+                    },
+                    onNavigateToCart = { navController.navigate("cart") },
+                    navController = navController,
+                    userId = userId,
+                    isUserLoggedIn = isUserLoggedIn,
+                    onNavigateToLogin = { navController.navigate("login") },
+                    onNavigateToAccount = {
+                        if (isUserLoggedIn && userId != -1) navController.navigate("account")
+                        else navController.navigate("login")
+                    },
+                    onLogout = {
+                        prefs.edit().clear().apply()
+                        navController.navigate("login") {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    })
+            } else {
+
+                androidx.compose.material3.Text(
+                    text = "Produit non trouvé.",
+                    modifier = androidx.compose.ui.Modifier.fillMaxSize().padding(16.dp)
+                )
+            }
         }
 
 
@@ -109,9 +152,66 @@ fun AppNavigation(viewModel: ProductViewModel) {
                 onOrder = {
                     viewModel.sendIntent(ProductIntent.SetSelectedProducts(it))
                     navController.navigate("commande")
+                },
+                isUserLoggedIn = isUserLoggedIn,
+                cartCount = uiState.cartCount,
+                searchTerm = uiState.searchTerm,
+                onSearchChange = { viewModel.onSearchChange(it) },
+                onSearchSubmit = { viewModel.onSearchSubmit() },
+                onNavigateToOrders = {
+                    if (isUserLoggedIn && userId != -1) {
+                        navController.navigate("orders/$userId")
+                    } else {
+                        navController.navigate("login")
+                    }
+                },
+                onNavigateToCart = { navController.navigate("cart") },
+                onNavigateToLogin = { navController.navigate("login") },
+                onNavigateToAccount = {
+                    if (isUserLoggedIn && userId != -1) navController.navigate("account")
+                    else navController.navigate("login")
+                },
+                onNavigateToFavorites = { navController.navigate("favorites") },
+                onLogout = {
+                    prefs.edit().clear().apply()
+                    navController.navigate("login") {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
             )
         }
+        composable("favorites") {
+            FavoritesScreen(
+                userId = userId,
+                navController = navController,
+                isUserLoggedIn = isUserLoggedIn,
+                cartCount = uiState.cartCount,
+                searchTerm = uiState.searchTerm,
+                onSearchChange = { viewModel.onSearchChange(it) },
+                onSearchSubmit = { viewModel.onSearchSubmit() },
+                onNavigateToOrders = {
+                    if (isUserLoggedIn && userId != -1) {
+                        navController.navigate("orders/$userId")
+                    } else {
+                        navController.navigate("login")
+                    }
+                },
+                onNavigateToCart = { navController.navigate("cart") },
+                onNavigateToLogin = { navController.navigate("login") },
+                onNavigateToAccount = {
+                    if (isUserLoggedIn && userId != -1) navController.navigate("account")
+                    else navController.navigate("login")
+                },
+                onNavigateToFavorites = { navController.navigate("favorites") },
+                onLogout = {
+                    prefs.edit().clear().apply()
+                    navController.navigate("login") {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            )
+        }
+
 
         composable("commande") {
             if (isUserLoggedIn && userId != -1) {
@@ -122,6 +222,32 @@ fun AppNavigation(viewModel: ProductViewModel) {
                         navController.navigate("orders/${it.userId}")
                     },
                     navController = navController,
+
+                    isUserLoggedIn = isUserLoggedIn,
+                    cartCount = uiState.cartCount,
+                    searchTerm = uiState.searchTerm,
+                    onSearchChange = { viewModel.onSearchChange(it) },
+                    onSearchSubmit = { viewModel.onSearchSubmit() },
+                    onNavigateToOrders = {
+                        if (isUserLoggedIn && userId != -1) {
+                            navController.navigate("orders/$userId")
+                        } else {
+                            navController.navigate("login")
+                        }
+                    },
+                    onNavigateToCart = { navController.navigate("cart") },
+                    onNavigateToLogin = { navController.navigate("login") },
+                    onNavigateToAccount = {
+                        if (isUserLoggedIn && userId != -1) navController.navigate("account")
+                        else navController.navigate("login")
+                    },
+                    onNavigateToFavorites = { navController.navigate("favorites") },
+                    onLogout = {
+                        prefs.edit().clear().apply()
+                        navController.navigate("login") {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
                 )
             } else {
                 LaunchedEffect(Unit) { navController.navigate("login") }
@@ -134,7 +260,32 @@ fun AppNavigation(viewModel: ProductViewModel) {
                 OrderListScreen(
                     userId = uid,
                     onBack = { navController.popBackStack() },
-                    navController = navController
+                    navController = navController,
+                    isUserLoggedIn = isUserLoggedIn,
+                    cartCount = uiState.cartCount,
+                    searchTerm = uiState.searchTerm,
+                    onSearchChange = { viewModel.onSearchChange(it) },
+                    onSearchSubmit = { viewModel.onSearchSubmit() },
+                    onNavigateToOrders = {
+                        if (isUserLoggedIn && userId != -1) {
+                            navController.navigate("orders/$userId")
+                        } else {
+                            navController.navigate("login")
+                        }
+                    },
+                    onNavigateToCart = { navController.navigate("cart") },
+                    onNavigateToLogin = { navController.navigate("login") },
+                    onNavigateToAccount = {
+                        if (isUserLoggedIn && userId != -1) navController.navigate("account")
+                        else navController.navigate("login")
+                    },
+                    onNavigateToFavorites = { navController.navigate("favorites") },
+                    onLogout = {
+                        prefs.edit().clear().apply()
+                        navController.navigate("login") {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
                 )
             } else {
                 LaunchedEffect(Unit) { navController.navigate("login") }
@@ -145,7 +296,32 @@ fun AppNavigation(viewModel: ProductViewModel) {
             if (isUserLoggedIn && userId != -1) {
                 AccountScreen(
                     onBack = { navController.popBackStack() },
-                    onNavigateToLogin = { navController.navigate("login") }
+                    onNavigateToLogin = { navController.navigate("login") },
+                    navController = navController,
+                    isUserLoggedIn = isUserLoggedIn,
+                    cartCount = uiState.cartCount,
+                    searchTerm = uiState.searchTerm,
+                    onSearchChange = { viewModel.onSearchChange(it) },
+                    onSearchSubmit = { viewModel.onSearchSubmit() },
+                    onNavigateToOrders = {
+                        if (isUserLoggedIn && userId != -1) {
+                            navController.navigate("orders/$userId")
+                        } else {
+                            navController.navigate("login")
+                        }
+                    },
+                    onNavigateToCart = { navController.navigate("cart") },
+                    onNavigateToAccount = {
+                        if (isUserLoggedIn && userId != -1) navController.navigate("account")
+                        else navController.navigate("login")
+                    },
+                    onNavigateToFavorites = { navController.navigate("favorites") },
+                    onLogout = {
+                        prefs.edit().clear().apply()
+                        navController.navigate("login") {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
                 )
             } else {
                 LaunchedEffect(Unit) {
@@ -156,6 +332,8 @@ fun AppNavigation(viewModel: ProductViewModel) {
         composable("register") {
             RegisterScreen(navController = navController)
         }
+
+
 
 
     }

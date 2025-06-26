@@ -23,10 +23,9 @@ fun RegisterScreen(navController: NavController) {
     var message by remember { mutableStateOf("") }
     var registrationSuccess by remember { mutableStateOf(false) }
 
-    // استخدم LaunchedEffect هنا لمراقبة تغييرات registrationSuccess
     LaunchedEffect(registrationSuccess) {
         if (registrationSuccess) {
-            delay(2000) // انتظر ثانيتين قبل الانتقال
+            delay(2000)
             navController.navigate("login") {
                 popUpTo("register") { inclusive = true }
             }
@@ -78,9 +77,9 @@ fun RegisterScreen(navController: NavController) {
 
                 if (success) {
                     message = "Inscription réussie 🎉 Redirection..."
-                    registrationSuccess = true // تحديث حالة النجاح
+                    registrationSuccess = true
                 } else {
-                    message = "Cet email existe déjà ❌"
+                    message = "Cet email existe déjà "
                 }
             },
             modifier = Modifier.fillMaxWidth()

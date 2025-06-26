@@ -57,7 +57,6 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Lien vers la page d'inscription
         TextButton(onClick = {
             navController.navigate("register")
         }) {

@@ -2,6 +2,7 @@ package com.example.my_projet.ui.product.screens
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -10,6 +11,7 @@ import androidx.navigation.NavController
 import com.example.my_projet.data.Entities.Product
 import com.example.my_projet.ui.product.component.MainHeader
 import com.example.my_projet.ui.product.component.ProductGrid
+import com.example.my_projet.ui.product.component.SearchBar
 import com.example.my_projet.ui.product.component.TopBannerWithGenres
 
 @Composable
@@ -32,7 +34,7 @@ fun HomeScreen(
     onNextTop: () -> Unit,
     onAddToCart: (Product) -> Unit,
     navController: NavController,
-    userId: Int = 1,
+    userId: Int = -1,
     isUserLoggedIn: Boolean = true,
     onLogout: () -> Unit,
     onNavigateToLogin: () -> Unit,
@@ -54,7 +56,7 @@ fun HomeScreen(
             },
             onLogout = {
                 Log.d("AUTH", "Déconnexion depuis HomeScreen...")
-                onLogout() // كتنفذ تسجيل الخروج من AppNavigation
+                onLogout()
             },
             onNavigateToLogin = {
                 Log.d("AUTH", "Navigating to Login from HomeScreen...")
@@ -65,9 +67,19 @@ fun HomeScreen(
                 onNavigateToAccount()
             },
             navController = navController,
-            userId = userId
-        )
+            onNavigateToFavorites = { navController.navigate("favorites") },
+            userId = userId,
+            onNavigateToHome = { navController.navigate("home") }
 
+        )
+        SearchBar(
+            searchTerm = searchTerm,
+            onSearchChange = onSearchChange,
+            onSearchSubmit = onSearchSubmit,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        )
         if (topProducts.isNotEmpty()) {
             TopBannerWithGenres(
                 product = topProducts[activeTopIndex],

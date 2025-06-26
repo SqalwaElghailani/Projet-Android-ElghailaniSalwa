@@ -36,6 +36,7 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.layout.ContentScale
 
 @Composable
 fun ProductItem(
@@ -68,12 +69,15 @@ fun ProductItem(
                     .height(100.dp)
                     .clickable { onNavigateToDetails(product.id.toString()) }
             ) {
-
                 Image(
                     painter = painterResource(id = if (imageResId != 0) imageResId else R.drawable.ml),
                     contentDescription = null,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp),
+                    contentScale = ContentScale.Crop
                 )
+
                 Text(
                     text = "${product.chapters} chapitres",
                     modifier = Modifier
@@ -100,8 +104,7 @@ fun ProductItem(
                         .padding(top = 8.dp),
                     horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween
                 ) {
-                    // زر بالأيقونة
-                    Button(
+                     Button(
                         onClick = {
                             if (userId == -1) {
                                 Toast.makeText(

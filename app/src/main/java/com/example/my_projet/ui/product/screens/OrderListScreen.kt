@@ -17,69 +17,114 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.example.my_projet.data.Api.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.ui.text.font.FontWeight
+import com.example.my_projet.ui.product.component.MainHeader
 
 @Composable
 fun OrderListScreen(
     userId: Int,
+    navController: NavController,
     onBack: () -> Unit,
-    navController: NavController
+    isUserLoggedIn: Boolean,
+    cartCount: Int,
+    searchTerm: String,
+    onSearchChange: (String) -> Unit,
+    onSearchSubmit: () -> Unit,
+    onNavigateToOrders: () -> Unit,
+    onNavigateToCart: () -> Unit,
+    onNavigateToLogin: () -> Unit,
+    onNavigateToAccount: () -> Unit,
+    onNavigateToFavorites: () -> Unit,
+    onLogout: () -> Unit
 ) {
     val context = LocalContext.current
     var orders by remember { mutableStateOf(listOf<Order>()) }
 
     LaunchedEffect(userId) {
-        Log.d("OrderListScreen", "Chargement des commandes pour userId=$userId")
         orders = lireCommandesParUser(context, userId)
-        Log.d("OrderListScreen", "Commandes chargées: ${orders.size}")
-        orders.forEach { order ->
-            Log.d("OrderListScreen", "Commande: total=${order.totalPrice}, adresse=${order.address}, paiement=${order.paymentMethod}, items=${order.items.size}")
-        }
     }
 
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text("Liste des commandes pour l'utilisateur $userId", style = MaterialTheme.typography.titleLarge)
-        Spacer(modifier = Modifier.height(16.dp))
+    Column(
+        modifier = Modifier.padding(12.dp)
+    ) {
+        MainHeader(
+            searchTerm = searchTerm,
+            onSearchChange = onSearchChange,
+            onSearchSubmit = onSearchSubmit,
+            cartCount = cartCount,
+            isUserLoggedIn = isUserLoggedIn,
+            onNavigateToOrders = onNavigateToOrders,
+            onNavigateToCart = onNavigateToCart,
+            onLogout = onLogout,
+            onNavigateToLogin = onNavigateToLogin,
+            onNavigateToAccount = onNavigateToAccount,
+            navController = navController,
+            onNavigateToFavorites = { navController.navigate("favorites") },
+            userId = userId,
+            onNavigateToHome = { navController.navigate("home") }
+        )
+
+        // ✅ Titre avec flèche de retour
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 16.dp)
+        ) {
+            IconButton(onClick = { navController.popBackStack() }) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Retour",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            Text(
+                text = "Mes commandes",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+        }
 
         if (orders.isEmpty()) {
             Text("Aucune commande trouvée.")
-            Log.d("OrderListScreen", "Aucune commande trouvée pour userId=$userId")
         } else {
             orders.forEach { order ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp)
+                        .padding(vertical = 8.dp),
+                    elevation = CardDefaults.cardElevation(4.dp)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.Top,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                    ) {
-                        // 👉 الجزء ديال المعلومات
-                        Column(
-                            modifier = Modifier.weight(1f) // ياخذ المساحة الكاملة الممكنة
-                        ) {
-                            Text("la date: ${order.date} ")
-                            Text("Adresse: ${order.address}")
-                            Text("Telephone: ${order.phone}")
-                            Text("Prix Total: ${order.totalPrice} MAD")
-                            Text("Status: ${order.status}")
-                            Text("Mode de paiement: ${order.paymentMethod}")
-                            Text("Items:")
-                            order.items.forEach { item ->
-                                Text("- ${item.productName} x${item.quantity}, Chapitres: ${item.chapters.joinToString()}")
-                            }
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text("Date: ${order.date}", fontWeight = FontWeight.SemiBold)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text("Adresse: ${order.address}")
+                        Text("Téléphone: ${order.phone}")
+                        Text("Prix total: ${order.totalPrice} MAD")
+                        Text("Statut: ${order.status}")
+                        Text("Paiement: ${order.paymentMethod}")
+
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Divider()
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Text("Articles:", fontWeight = FontWeight.Medium)
+                        order.items.forEach { item ->
+                            Text("- ${item.productName} x${item.quantity} (Chapitres: ${item.chapters.joinToString()})")
                         }
 
-                        // 👉 أيقونة الحذف بلون أحمر
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Divider()
+
                         IconButton(
                             onClick = {
                                 supprimerCommandeParId(context, order.id)
                                 orders = orders.filter { it.id != order.id }
                             },
-                            modifier = Modifier.align(Alignment.Top)
+                            modifier = Modifier
+                                .align(Alignment.End)
+                                .padding(top = 8.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
@@ -89,18 +134,8 @@ fun OrderListScreen(
                         }
                     }
                 }
-
             }
-
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(onClick = {
-            Log.d("OrderListScreen", "Retour demandé")
-            onBack()
-        }) {
-            Text("Retour")
         }
     }
 }
+

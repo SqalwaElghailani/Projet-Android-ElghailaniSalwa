@@ -56,7 +56,6 @@ fun TopBannerWithGenres(
                 .padding(12.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // ✅ لائحة الأصناف
             GenresList(
                 genres = genres,
                 selectedGenre = selectedGenre,
@@ -64,7 +63,6 @@ fun TopBannerWithGenres(
                 onClearGenre = onClearGenre
             )
 
-            // ✅ المعلومات
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(text = "${product.name}", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
                 Text(text = "${product.genre}", color = Color.LightGray)
@@ -76,7 +74,6 @@ fun TopBannerWithGenres(
                     modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
                 )
 
-                // ✅ أزرار التنقل
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth()

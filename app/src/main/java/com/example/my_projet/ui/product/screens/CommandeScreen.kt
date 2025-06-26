@@ -13,6 +13,7 @@ import com.example.my_projet.data.Entities.Product
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.example.my_projet.data.Api.*
+import com.example.my_projet.ui.product.component.MainHeader
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -21,11 +22,22 @@ fun CommandeScreen(
     selectedProducts: List<Product>,
     onBack: () -> Unit,
     onConfirm: (Order) -> Unit,
-    navController: NavController
+    navController: NavController,
+
+    isUserLoggedIn: Boolean,
+    cartCount: Int,
+    searchTerm: String,
+    onSearchChange: (String) -> Unit,
+    onSearchSubmit: () -> Unit,
+    onNavigateToOrders: () -> Unit,
+    onNavigateToCart: () -> Unit,
+    onNavigateToLogin: () -> Unit,
+    onNavigateToAccount: () -> Unit,
+    onNavigateToFavorites: () -> Unit,
+    onLogout: () -> Unit
 ) {
     val context = LocalContext.current
 
-    // ✅ قراءة userId من SharedPreferences
     val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
     val userId = prefs.getInt("user_id", -1)
 
@@ -61,7 +73,37 @@ fun CommandeScreen(
         }
     }
 
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(
+        modifier = Modifier.padding(start = 4.dp, end = 4.dp, top = 20.dp, bottom = 20.dp)
+    ) {
+        MainHeader(
+            searchTerm = searchTerm,
+            onSearchChange = onSearchChange,
+            onSearchSubmit = onSearchSubmit,
+            cartCount = cartCount,
+            isUserLoggedIn = isUserLoggedIn,
+            onNavigateToOrders = onNavigateToOrders,
+            onNavigateToCart = {
+                Log.d("NAVIGATION", "Navigating to cart screen from HomeScreen")
+                onNavigateToCart()
+            },
+            onLogout = {
+                Log.d("AUTH", "Déconnexion depuis HomeScreen...")
+                onLogout() // كتنفذ تسجيل الخروج من AppNavigation
+            },
+            onNavigateToLogin = {
+                Log.d("AUTH", "Navigating to Login from HomeScreen...")
+                onNavigateToLogin()
+            },
+            onNavigateToAccount = {
+                Log.d("AUTH", "Navigating to Account from HomeScreen...")
+                onNavigateToAccount()
+            },
+            navController = navController,
+            onNavigateToFavorites = { navController.navigate("favorites") },
+            userId = userId,
+            onNavigateToHome = { navController.navigate("home") }
+        )
         Text("Confirmer la Commande", style = MaterialTheme.typography.titleLarge)
 
         productStates.values.forEach { sel ->
@@ -177,5 +219,5 @@ data class Order(
     val paymentMethod: String,
     val items: List<OrderItem>,
     val status: String,
-    val date: String // ✅ تاريخ الطلب
+    val date: String
 )
