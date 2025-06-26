@@ -45,20 +45,26 @@ class ProductViewModel @Inject constructor(
                         _state.update { it.copy(selectedGenre = intent.genre) }
                         filterProducts()
                     }
+
                     is ProductIntent.ClearGenre -> {
                         _state.update { it.copy(selectedGenre = null) }
                         filterProducts()
                     }
+
                     is ProductIntent.PreviousTopProduct -> {
                         val current = _state.value.activeTopIndex
-                        val newIndex = if (current > 0) current - 1 else _state.value.topProducts.lastIndex
+                        val newIndex =
+                            if (current > 0) current - 1 else _state.value.topProducts.lastIndex
                         _state.update { it.copy(activeTopIndex = newIndex) }
                     }
+
                     is ProductIntent.NextTopProduct -> {
                         val current = _state.value.activeTopIndex
-                        val newIndex = if (current < _state.value.topProducts.lastIndex) current + 1 else 0
+                        val newIndex =
+                            if (current < _state.value.topProducts.lastIndex) current + 1 else 0
                         _state.update { it.copy(activeTopIndex = newIndex) }
                     }
+
                     is ProductIntent.AddToCart -> {
                         // هنا كتزيد المنتوج للسلة. ممكن مثلا:
                         val updatedCartCount = _state.value.cartCount + 1
@@ -66,19 +72,25 @@ class ProductViewModel @Inject constructor(
 
                         // يمكن تزيد log أو message
                         Log.d("AddToCart", "Produit ajouté: ${intent.product.name}")
-                    } is ProductIntent.SetSelectedProducts -> {
-                    _state.update { it.copy(selectedProducts = intent.products) }
-                }               }
+                    }
+
+                    is ProductIntent.SetSelectedProducts -> {
+                        _state.update { it.copy(selectedProducts = intent.products) }
+                    }
+                }
             }
         }
     }
+
     fun onSearchChange(newTerm: String) {
-        _state.value = _state.value.copy(searchTerm = newTerm)
+        _state.update { it.copy(searchTerm = newTerm) }
+        filterProducts()
     }
 
     fun onSearchSubmit() {
-        // Implémente la logique de recherche ici
+        filterProducts()
     }
+
     private suspend fun loadProducts() {
         _state.value = _state.value.copy(isLoading = true, error = null)
         try {
@@ -92,17 +104,21 @@ class ProductViewModel @Inject constructor(
                 genres = genres
             )
         } catch (e: Exception) {
-            _state.value = ProductViewState(isLoading = false, error = e.message ?: "Erreur de chargement")
+            _state.value =
+                ProductViewState(isLoading = false, error = e.message ?: "Erreur de chargement")
         }
     }
 
     private fun filterProducts() {
         val genre = _state.value.selectedGenre
-        val filtered = if (genre != null) {
-            _state.value.products.filter { it.genre == genre }
-        } else {
-            _state.value.products
+        val searchTerm = _state.value.searchTerm.trim()
+
+        val filtered = _state.value.products.filter { product ->
+            val matchGenre = genre == null || product.genre == genre
+            val matchSearch = searchTerm.isBlank() || product.name?.contains(searchTerm, ignoreCase = true) == true
+            matchGenre && matchSearch
         }
+
         _state.update { it.copy(filteredProducts = filtered) }
     }
 }

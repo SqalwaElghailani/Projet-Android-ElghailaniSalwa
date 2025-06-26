@@ -19,7 +19,7 @@ fun ProductGrid(products: List<Product>,
                 onClick: (String) -> Unit,
                 onAddToCart: (Product) -> Unit) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2), // ou 4 si bghiti 4 f ligne
+        columns = GridCells.Fixed(2),
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(8.dp)
     ) {
@@ -27,7 +27,7 @@ fun ProductGrid(products: List<Product>,
             ProductItem(
                 product = product,
                 onNavigateToDetails = onClick,
-                onAddToCart = onAddToCart // ✅
+                onAddToCart = onAddToCart
             )
         }
     }
