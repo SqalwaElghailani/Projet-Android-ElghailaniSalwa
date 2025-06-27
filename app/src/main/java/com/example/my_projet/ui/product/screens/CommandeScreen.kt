@@ -3,17 +3,23 @@ package com.example.my_projet.ui.product.screens
 import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.input.TextFieldValue
-import com.example.my_projet.data.Entities.Product
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
+import com.example.my_projet.data.Entities.Product
 import com.example.my_projet.data.Api.*
 import com.example.my_projet.ui.product.component.MainHeader
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -23,7 +29,6 @@ fun CommandeScreen(
     onBack: () -> Unit,
     onConfirm: (Order) -> Unit,
     navController: NavController,
-
     isUserLoggedIn: Boolean,
     cartCount: Int,
     searchTerm: String,
@@ -37,10 +42,8 @@ fun CommandeScreen(
     onLogout: () -> Unit
 ) {
     val context = LocalContext.current
-
     val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
     val userId = prefs.getInt("user_id", -1)
-
     val status = "en attend"
 
     var phone by remember { mutableStateOf(TextFieldValue("")) }
@@ -73,6 +76,8 @@ fun CommandeScreen(
         }
     }
 
+    val coroutineScope = rememberCoroutineScope()
+
     Column(
         modifier = Modifier.padding(start = 4.dp, end = 4.dp, top = 20.dp, bottom = 20.dp)
     ) {
@@ -83,30 +88,37 @@ fun CommandeScreen(
             cartCount = cartCount,
             isUserLoggedIn = isUserLoggedIn,
             onNavigateToOrders = onNavigateToOrders,
-            onNavigateToCart = {
-                Log.d("NAVIGATION", "Navigating to cart screen from HomeScreen")
-                onNavigateToCart()
-            },
-            onLogout = {
-                Log.d("AUTH", "Déconnexion depuis HomeScreen...")
-                onLogout() // كتنفذ تسجيل الخروج من AppNavigation
-            },
-            onNavigateToLogin = {
-                Log.d("AUTH", "Navigating to Login from HomeScreen...")
-                onNavigateToLogin()
-            },
-            onNavigateToAccount = {
-                Log.d("AUTH", "Navigating to Account from HomeScreen...")
-                onNavigateToAccount()
-            },
+            onNavigateToCart = onNavigateToCart,
+            onLogout = onLogout,
+            onNavigateToLogin = onNavigateToLogin,
+            onNavigateToAccount = onNavigateToAccount,
             navController = navController,
             onNavigateToFavorites = { navController.navigate("favorites") },
             userId = userId,
             onNavigateToHome = { navController.navigate("home") }
         )
-        Text("Confirmer la Commande", style = MaterialTheme.typography.titleLarge)
+
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onBack) {
+                Icon(Icons.Filled.ArrowBack, contentDescription = "Retour")
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Confirmer la Commande", style = MaterialTheme.typography.titleLarge)
+        }
+
+        Divider(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+        )
 
         productStates.values.forEach { sel ->
+            val chaptersList = (1..(sel.product.chapters ?: 1)).toList()
+            val listState = rememberLazyListState()
+
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text("Produit: ${sel.product.name}")
                 Text("Prix unitaire: ${sel.product.price} MAD")
@@ -123,28 +135,71 @@ fun CommandeScreen(
                 }
 
                 Text("Chapitres:")
-                Row {
-                    (1..(sel.product.chapters ?: 1)).forEach { chNum ->
-                        FilterChip(
-                            selected = sel.selectedChapters.value.contains(chNum),
-                            onClick = {
-                                sel.selectedChapters.value =
-                                    if (sel.selectedChapters.value.contains(chNum))
-                                        sel.selectedChapters.value - chNum
-                                    else
-                                        sel.selectedChapters.value + chNum
-                            },
-                            label = { Text("$chNum") }
-                        )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(onClick = {
+                        coroutineScope.launch {
+                            val firstVisible = listState.firstVisibleItemIndex
+                            listState.animateScrollToItem((firstVisible - 5).coerceAtLeast(0))
+                        }
+                    }) {
+                        Text("\u25C0")
+                    }
+                    LazyRow(state = listState, modifier = Modifier.weight(1f)) {
+                        items(chaptersList) { chNum ->
+                            FilterChip(
+                                selected = sel.selectedChapters.value.contains(chNum),
+                                onClick = {
+                                    sel.selectedChapters.value =
+                                        if (sel.selectedChapters.value.contains(chNum))
+                                            sel.selectedChapters.value - chNum
+                                        else
+                                            sel.selectedChapters.value + chNum
+                                },
+                                label = { Text("$chNum") },
+                                modifier = Modifier.padding(horizontal = 4.dp)
+                            )
+                        }
+                    }
+                    IconButton(onClick = {
+                        coroutineScope.launch {
+                            val lastVisible = listState.firstVisibleItemIndex + listState.layoutInfo.visibleItemsInfo.size
+                            listState.animateScrollToItem((lastVisible).coerceAtMost(chaptersList.lastIndex))
+                        }
+                    }) {
+                        Text("\u25B6")
                     }
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        OutlinedTextField(value = phone, onValueChange = { phone = it }, label = { Text("Téléphone") })
-        OutlinedTextField(value = address, onValueChange = { address = it }, label = { Text("Adresse") })
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+        ) {
+            Text("Téléphone :", modifier = Modifier.width(100.dp))
+            OutlinedTextField(
+                value = phone,
+                onValueChange = { phone = it },
+                modifier = Modifier.weight(1f),
+                singleLine = true
+            )
+        }
 
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+        ) {
+            Text("Adresse :", modifier = Modifier.width(100.dp))
+            OutlinedTextField(
+                value = address,
+                onValueChange = { address = it },
+                modifier = Modifier.weight(1f),
+                singleLine = true
+            )
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
         Text("Total: $totalPrice MAD")
 
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -155,6 +210,7 @@ fun CommandeScreen(
             Text("Paiement à la livraison")
         }
 
+        Spacer(modifier = Modifier.height(12.dp))
         Button(
             onClick = {
                 val items = productStates.values.map {
@@ -191,8 +247,6 @@ fun CommandeScreen(
         }
     }
 }
-
-
 
 // ======================== Data Classes ========================
 
