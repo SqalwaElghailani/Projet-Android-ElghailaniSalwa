@@ -1,105 +1,142 @@
 package com.example.my_projet.ui.product.screens
 
-import android.content.Context
-import android.util.Log
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.example.my_projet.data.Api.readUsers
+import com.example.my_projet.R
 import com.example.my_projet.data.Entities.User
-import com.example.my_projet.ui.product.component.MainHeader
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 @Composable
 fun AccountScreen(
-    navController: NavController,
-    isUserLoggedIn: Boolean,
+    user: User,
+    favoritesCount: Int,
+    ordersCount: Int,
     cartCount: Int,
-    searchTerm: String,
-    onSearchChange: (String) -> Unit,
-    onSearchSubmit: () -> Unit,
-    onNavigateToOrders: () -> Unit,
-    onNavigateToCart: () -> Unit,
-    onNavigateToLogin: () -> Unit,
-    onNavigateToAccount: () -> Unit,
-    onNavigateToFavorites: () -> Unit,
     onLogout: () -> Unit,
-    onBack: () -> Unit
+    onEditProfile: () -> Unit,
+    onBack: () -> Unit,
 ) {
-    val context = LocalContext.current
-    var user by remember { mutableStateOf<User?>(null) }
-    var isChecking by remember { mutableStateOf(true) }
-    val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-    val userId = prefs.getInt("user_id", -1)
-
-    LaunchedEffect(Unit) {
-        if (userId == -1) {
-            onNavigateToLogin()
-        } else {
-            val allUsers = withContext(Dispatchers.IO) { readUsers(context) }
-            user = allUsers.find { it.id == userId }
-            if (user == null) {
-                onNavigateToLogin()
-            }
-        }
-        isChecking = false
-    }
-
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
+            .background(Color.White)
             .padding(start = 4.dp, end = 4.dp, top = 20.dp, bottom = 20.dp)
     ) {
-        MainHeader(
-            searchTerm = searchTerm,
-            onSearchChange = onSearchChange,
-            onSearchSubmit = onSearchSubmit,
-            cartCount = cartCount,
-            isUserLoggedIn = isUserLoggedIn,
-            onNavigateToOrders = onNavigateToOrders,
-            onNavigateToCart = onNavigateToCart,
-            onLogout = onLogout,
-            onNavigateToLogin = onNavigateToLogin,
-            onNavigateToAccount = onNavigateToAccount,
-            navController = navController,
-            onNavigateToFavorites = onNavigateToFavorites,
-            userId = userId,
-            onNavigateToHome = { navController.navigate("home") }
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+        ) {
+            // خلفية الصورة
+            Image(
+                painter = painterResource(id = R.drawable.img),
+                contentDescription = "Background Image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
 
-        Spacer(modifier = Modifier.height(20.dp))
-
-        if (isChecking) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+            // زر الرجوع
+            IconButton(
+                onClick = { onBack() },
+                modifier = Modifier.align(Alignment.TopStart).padding(12.dp)
             ) {
-                CircularProgressIndicator()
+                Icon(Icons.Default.ArrowBack, contentDescription = "Retour", tint = Color.Black)
             }
-        } else {
-            user?.let {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text("Bienvenue, ${it.firstName} ✨", style = MaterialTheme.typography.headlineSmall)
-                    Text("Email: ${it.email}", style = MaterialTheme.typography.bodyLarge)
 
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Button(onClick = onBack) {
-                        Text("Retour")
-                    }
+            // زر 3 نقاط وزر الخروج جنب بعض في الأعلى على اليمين
+            Row(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                IconButton(onClick = { onLogout() }) {
+                    Icon(Icons.Default.ExitToApp, contentDescription = "Logout", tint = Color.Black)
+                }
+                IconButton(onClick = { /* هنا دير شي أكشن ديال 3 نقاط إذا بغيت */ }) {
+                    Icon(Icons.Default.MoreVert, contentDescription = "Menu", tint = Color.Black)
                 }
             }
         }
+
+        Spacer(modifier = Modifier.height(-40.dp))
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            // صورة المستخدم
+            Image(
+                painter = painterResource(id = R.drawable.user),
+                contentDescription = "User Logo",
+                modifier = Modifier
+                    .size(80.dp)
+                    .background(Color.White, shape = CircleShape)
+                    .padding(4.dp)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // الاسم تحت لوجو
+            Text(
+                text = user.firstName + " " + user.lastName,
+                style = MaterialTheme.typography.titleLarge
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            // الإيميل تحت الاسم
+            Text(
+                text = user.email ?: "",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Gray
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // زر تعديل الملف تحت الإيميل
+            OutlinedButton(onClick = onEditProfile) {
+                Text("Modifier le profil")
+            }
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Divider()
+
+//        // الإحصائيات (معلقة كما طلبت)
+//        Column(
+//            modifier = Modifier.padding(16.dp)
+//        ) {
+//            StatItem(label = "Commandes", value = ordersCount)
+//            StatItem(label = "Favoris", value = favoritesCount)
+//            StatItem(label = "Panier", value = cartCount)
+//        }
+    }
+}
+
+@Composable
+fun StatItem(label: String, value: Int) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(label, style = MaterialTheme.typography.bodyLarge)
+        Text(value.toString(), style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.primary)
     }
 }
