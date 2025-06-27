@@ -44,7 +44,7 @@ Objectifs principaux :
 
 
 
-
+![alt text](images/architecture.png)
 ---
 
 ## Fonctionnalités implémentées
