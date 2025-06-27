@@ -54,7 +54,8 @@ fun MainHeader(
                 Icon(
                     imageVector = Icons.Default.Home,
                     contentDescription = "Accueil",
-                    tint = if (currentRoute == "home") Color(0xFFFF6B00) else Color.Black
+                    tint = if (currentRoute == "home") Color(0xFFFF6B00) else Color.Black,
+                    modifier = Modifier.size(32.dp)
                 )
             }
             Row(
@@ -66,7 +67,8 @@ fun MainHeader(
                     Icon(
                         imageVector = Icons.Default.Favorite,
                         contentDescription = "Favoris",
-                        tint = if (currentRoute == "favorites") Color(0xFFFF6B00) else Color.Black
+                        tint = if (currentRoute == "favorites") Color(0xFFFF6B00) else Color.Black,
+                        modifier = Modifier.size(32.dp)
                     )
                 }
                 Box {
@@ -74,7 +76,8 @@ fun MainHeader(
                         Icon(
                             Icons.Default.ShoppingCart,
                             contentDescription = "Panier",
-                            tint = if (currentRoute == "cart") Color(0xFFFF6B00) else Color.Black
+                            tint = if (currentRoute == "cart") Color(0xFFFF6B00) else Color.Black,
+                            modifier = Modifier.size(32.dp)
                         )
                     }
                     if (cartCount > 0) {
@@ -97,7 +100,8 @@ fun MainHeader(
                     Icon(
                         Icons.Default.Receipt,
                         contentDescription = "Mes Commandes",
-                        tint = if (currentRoute?.startsWith("orders/$userId")== true) Color(0xFFFF6B00) else Color.Black
+                        tint = if (currentRoute?.startsWith("orders/$userId")== true) Color(0xFFFF6B00) else Color.Black,
+                        modifier = Modifier.size(32.dp)
                     )
                 }
 
@@ -108,19 +112,20 @@ fun MainHeader(
                     Icon(
                         imageVector = Icons.Default.Person,
                         contentDescription = "Compte",
-                        tint = if (currentRoute == "account") Color(0xFFFF6B00) else Color.Black
+                        tint = if (currentRoute == "account") Color(0xFFFF6B00) else Color.Black,
+                        modifier = Modifier.size(32.dp)
                     )
                 }
 
-                if (isUserLoggedIn) {
-                    IconButton(onClick = { onLogout() }) {
-                        Icon(
-                            Icons.Default.Logout,
-                            contentDescription = "Déconnexion",
-                            tint = Color.Red
-                        )
-                    }
-                }
+//                if (isUserLoggedIn) {
+//                    IconButton(onClick = { onLogout() }) {
+//                        Icon(
+//                            Icons.Default.Logout,
+//                            contentDescription = "Déconnexion",
+//                            tint = Color.Red
+//                        )
+//                    }
+//                }
             }
         }
     }
@@ -137,6 +142,7 @@ fun MainHeader(
 //            modifier = Modifier.fillMaxWidth()
 //        )
 
+
 @Composable
 fun SearchBar(
     searchTerm: String,
@@ -144,11 +150,31 @@ fun SearchBar(
     onSearchSubmit: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    TextField(
+    val orangeColor = Color(0xFFFF6F00)
+
+    OutlinedTextField(
         value = searchTerm,
         onValueChange = onSearchChange,
         placeholder = { Text("Rechercher des mangas, tomes...") },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = "Search Icon",
+                tint = orangeColor
+            )
+        },
         singleLine = true,
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = orangeColor,
+            unfocusedBorderColor = orangeColor,
+            cursorColor = orangeColor,
+            focusedTextColor = Color.Black,
+            unfocusedTextColor = Color.Black,
+            focusedLabelColor = orangeColor
+        ),
+        shape = MaterialTheme.shapes.medium
     )
 }

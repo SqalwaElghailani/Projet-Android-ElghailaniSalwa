@@ -35,7 +35,7 @@ fun TopBannerWithGenres(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(300.dp)
+            .height(270.dp)
     ) {
         val context = LocalContext.current
         val imageResId = context.resources.getIdentifier(
@@ -68,7 +68,7 @@ fun TopBannerWithGenres(
                 Text(text = "${product.genre}", color = Color.LightGray)
                 Text(text = "${product.description}", color = Color.White, maxLines = 2)
                 Text(
-                    text = "${product.price} €",
+                    text = "${product.price} MAD",
                     color = Color(0xFFFF6B00),
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
