@@ -3,9 +3,13 @@ package com.example.my_projet.ui.product.screens
 
 import android.content.Context
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -23,6 +27,8 @@ fun RegisterScreen(navController: NavController) {
     var message by remember { mutableStateOf("") }
     var registrationSuccess by remember { mutableStateOf(false) }
 
+    val orangeColor = Color(0xFFFF6F00)
+
     LaunchedEffect(registrationSuccess) {
         if (registrationSuccess) {
             delay(2000)
@@ -32,38 +38,109 @@ fun RegisterScreen(navController: NavController) {
         }
     }
 
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(30.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 12.dp),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            IconButton(onClick = { navController.popBackStack() }) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Retour",
+                    tint = orangeColor
+                )
+            }
+        }
+    }
+
         Text("Créer un compte", style = MaterialTheme.typography.titleLarge)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(30.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text("Créer un compte", style = MaterialTheme.typography.titleLarge, color = orangeColor)
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             value = firstName,
             onValueChange = { firstName = it },
-            label = { Text("Prénom") },
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("Prénom", color = orangeColor) },
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = orangeColor,
+                unfocusedBorderColor = orangeColor,
+                cursorColor = orangeColor,
+                focusedLabelColor = orangeColor,
+                focusedTextColor = orangeColor,
+                unfocusedTextColor = orangeColor
+            )
         )
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedTextField(
             value = lastName,
             onValueChange = { lastName = it },
-            label = { Text("Nom") },
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("Nom", color = orangeColor) },
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = orangeColor,
+                unfocusedBorderColor = orangeColor,
+                cursorColor = orangeColor,
+                focusedLabelColor = orangeColor,
+                focusedTextColor = orangeColor,
+                unfocusedTextColor = orangeColor
+            )
         )
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("Email", color = orangeColor) },
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = orangeColor,
+                unfocusedBorderColor = orangeColor,
+                cursorColor = orangeColor,
+                focusedLabelColor = orangeColor,
+                focusedTextColor = orangeColor,
+                unfocusedTextColor = orangeColor
+            )
         )
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Mot de passe") },
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("Mot de passe", color = orangeColor) },
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = orangeColor,
+                unfocusedBorderColor = orangeColor,
+                cursorColor = orangeColor,
+                focusedLabelColor = orangeColor,
+                focusedTextColor = orangeColor,
+                unfocusedTextColor = orangeColor
+            )
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Button(
             onClick = {
@@ -82,20 +159,23 @@ fun RegisterScreen(navController: NavController) {
                     message = "Cet email existe déjà "
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = orangeColor)
         ) {
-            Text("S'inscrire")
-        }
-        TextButton(onClick = { navController.navigate("login") }) {
-            Text("Vous avez déjà un compte ? Se connecter")
+            Text("S'inscrire", color = Color.White)
         }
 
+        Spacer(modifier = Modifier.height(8.dp))
+
+        TextButton(onClick = { navController.navigate("login") }) {
+            Text("Vous avez déjà un compte ? Se connecter", color = orangeColor)
+        }
 
         if (message.isNotBlank()) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = message,
-                color = if (message.contains("réussie")) MaterialTheme.colorScheme.primary
+                color = if (message.contains("réussie")) orangeColor
                 else MaterialTheme.colorScheme.error
             )
         }
