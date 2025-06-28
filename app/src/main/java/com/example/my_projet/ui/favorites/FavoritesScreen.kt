@@ -1,17 +1,12 @@
-package com.example.my_projet.ui.product.screens
+package com.example.my_projet.ui.favorites
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -24,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -89,10 +85,10 @@ fun FavoritesScreen(
             modifier = Modifier.padding(bottom = 16.dp)
         ) {
             IconButton(onClick = { navController.popBackStack() }) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Retour")
+                Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.retour))
             }
             Text(
-                text = "Mes Favoris",
+                text = stringResource(R.string.mes_favoris),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
@@ -100,7 +96,7 @@ fun FavoritesScreen(
 
         if (favoriteItems.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Aucun article dans vos favoris.")
+                Text(stringResource(R.string.aucun_favori))
             }
         } else {
             LazyVerticalGrid(
@@ -110,12 +106,14 @@ fun FavoritesScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(favoriteItems) { item ->
-                    FavoriteProductCard(  item = item,
+                    FavoriteProductCard(
+                        item = item,
                         context = context,
                         onDelete = { refreshFavorites() },
                         onNavigateToDetails = { productId ->
                             navController.navigate("ProductDetails/$productId")
-                        })
+                        }
+                    )
                 }
             }
         }
@@ -127,7 +125,7 @@ fun FavoriteProductCard(
     item: CartItem,
     context: Context,
     onDelete: () -> Unit,
-    onNavigateToDetails: (String) -> Unit // ➕ نمرر الدالة للتنقل للتفاصيل
+    onNavigateToDetails: (String) -> Unit
 ) {
     val imageResId = context.resources.getIdentifier(item.imageUrl, "drawable", context.packageName)
 
@@ -142,8 +140,6 @@ fun FavoriteProductCard(
             modifier = Modifier.padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            // ✅ الصورة مع التنقل للتفاصيل
             Image(
                 painter = painterResource(id = if (imageResId != 0) imageResId else R.drawable.ml),
                 contentDescription = null,
@@ -162,7 +158,6 @@ fun FavoriteProductCard(
                 fontWeight = FontWeight.SemiBold
             )
 
-            // ✅ Row فيها السعر + أيقونة الحذف
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -185,7 +180,7 @@ fun FavoriteProductCard(
                 ) {
                     Icon(
                         Icons.Default.Delete,
-                        contentDescription = "Supprimer",
+                        contentDescription = stringResource(R.string.supprimer),
                         tint = Color.Red,
                         modifier = Modifier.size(18.dp)
                     )

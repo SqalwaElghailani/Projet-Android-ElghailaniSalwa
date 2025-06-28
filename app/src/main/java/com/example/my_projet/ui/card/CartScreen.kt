@@ -1,7 +1,8 @@
-package com.example.my_projet.ui.product.screens
+package com.example.my_projet.ui.card
 
 import android.content.Context
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -18,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,8 +30,6 @@ import com.example.my_projet.data.Api.removeFromCart
 import com.example.my_projet.data.Entities.CartItem
 import com.example.my_projet.data.Entities.Product
 import com.example.my_projet.ui.product.component.MainHeader
-import androidx.compose.foundation.clickable
-
 
 @Composable
 fun CartScreen(
@@ -92,16 +92,15 @@ fun CartScreen(
             onNavigateToHome = { navController.navigate("home") }
         )
 
-        // ✅ السهم والعنوان
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(vertical = 8.dp)
         ) {
             IconButton(onClick = { navController.popBackStack() }) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Retour")
+                Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.retour))
             }
             Text(
-                text = "Mon Panier",
+                text = stringResource(R.string.mon_panier),
                 style = MaterialTheme.typography.titleLarge
             )
         }
@@ -109,7 +108,7 @@ fun CartScreen(
         Spacer(modifier = Modifier.height(12.dp))
 
         if (items.isEmpty()) {
-            Text("Votre panier est vide.")
+            Text(stringResource(R.string.panier_vide))
         } else {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
@@ -144,7 +143,7 @@ fun CartScreen(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Total: $totalPrice MAD", style = MaterialTheme.typography.bodyLarge)
+        Text("${stringResource(R.string.total_label)} $totalPrice MAD", style = MaterialTheme.typography.bodyLarge)
         Spacer(modifier = Modifier.height(12.dp))
 
         Button(
@@ -159,12 +158,10 @@ fun CartScreen(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             enabled = selectedProducts.values.any { it }
         ) {
-            Text("Commander")
+            Text(stringResource(R.string.commander_button))
         }
     }
 }
-
-
 @Composable
 fun CartProductCard(
     item: CartItem,
@@ -217,7 +214,7 @@ fun CartProductCard(
                 contentScale = ContentScale.Crop
             )
 
-            Text("${product.name}", fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(top = 4.dp))
+            Text(product.name ?: "", fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(top = 4.dp))
 
             Row(
                 modifier = Modifier
@@ -229,7 +226,12 @@ fun CartProductCard(
                 Text("${product.price} MAD", color = Color.Gray, fontSize = 14.sp)
 
                 IconButton(onClick = onDelete, modifier = Modifier.size(40.dp)) {
-                    Icon(Icons.Default.Delete, contentDescription = "Supprimer", tint = Color.Red, modifier = Modifier.size(18.dp))
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = stringResource(R.string.supprimer),
+                        tint = Color.Red,
+                        modifier = Modifier.size(18.dp)
+                    )
                 }
             }
         }

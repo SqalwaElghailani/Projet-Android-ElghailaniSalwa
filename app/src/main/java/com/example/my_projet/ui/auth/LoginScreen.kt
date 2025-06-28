@@ -1,18 +1,20 @@
-package com.example.my_projet.ui.product.screens
+package com.example.my_projet.ui.auth
 
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.my_projet.R
 import com.example.my_projet.data.Api.readUsers
 import com.example.my_projet.data.Entities.User
 
@@ -44,26 +46,19 @@ fun LoginScreen(
             IconButton(onClick = { navController.popBackStack() }) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Retour",
+                    contentDescription = stringResource(R.string.back_button_desc),
                     tint = orangeColor
                 )
             }
-
-//            IconButton(onClick = { /* Logout Action */ }) {
-//                Icon(
-//                    imageVector = Icons.Default.ExitToApp,
-//                    contentDescription = "Logout",
-//                    tint = orangeColor
-//                )
-//            }
         }
+
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                "Se connecter",
+                text = stringResource(id = R.string.login_title),
                 style = MaterialTheme.typography.titleLarge,
                 color = orangeColor
             )
@@ -73,7 +68,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("Email", color = orangeColor) },
+                label = { Text(stringResource(id = R.string.email_label), color = orangeColor) },
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = orangeColor,
@@ -90,7 +85,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Mot de passe", color = orangeColor) },
+                label = { Text(stringResource(id = R.string.password_label), color = orangeColor) },
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = orangeColor,
@@ -120,12 +115,12 @@ fun LoginScreen(
                             popUpTo("login") { inclusive = true }
                         }
                     } else {
-                        message = "Email ou mot de passe incorrect"
+                        message = context.getString(R.string.login_error)
                     }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = orangeColor)
             ) {
-                Text("Connexion", color = Color.White)
+                Text(stringResource(id = R.string.login_button), color = Color.White)
             }
 
             if (message.isNotBlank()) {
@@ -135,12 +130,10 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            TextButton(
-                onClick = {
-                    navController.navigate("register")
-                }
-            ) {
-                Text("Pas de compte ? Inscrivez-vous ici", color = orangeColor)
+            TextButton(onClick = {
+                navController.navigate("register")
+            }) {
+                Text(stringResource(id = R.string.no_account), color = orangeColor)
             }
         }
     }

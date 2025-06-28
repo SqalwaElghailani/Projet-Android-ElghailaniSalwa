@@ -155,7 +155,7 @@ fun SearchBar(
     OutlinedTextField(
         value = searchTerm,
         onValueChange = onSearchChange,
-        placeholder = { Text("Rechercher des mangas, tomes...") },
+        placeholder = { Text("  ") },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,

@@ -1,14 +1,12 @@
 package com.example.my_projet.nav
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -16,12 +14,17 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.my_projet.data.Api.readUsers
 import com.example.my_projet.data.Entities.User
+import com.example.my_projet.ui.auth.AccountScreen
+import com.example.my_projet.ui.auth.LoginScreen
+import com.example.my_projet.ui.auth.RegisterScreen
+import com.example.my_projet.ui.card.CartScreen
+import com.example.my_projet.ui.favorites.FavoritesScreen
+import com.example.my_projet.ui.orders.CommandeScreen
+import com.example.my_projet.ui.orders.OrderListScreen
 import com.example.my_projet.ui.product.ProductIntent
 import com.example.my_projet.ui.product.ProductViewModel
 import com.example.my_projet.ui.product.component.DetailsScreen
 import com.example.my_projet.ui.product.screens.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 object Routes {
     const val Home = "home"
@@ -37,7 +40,7 @@ object Routes {
 }
 
 @Composable
-fun AppNavigation(viewModel: ProductViewModel) {
+fun AppNavigation(viewModel: ProductViewModel,onLanguageSelected: (String) -> Unit) {
     val context = LocalContext.current
     val navController = rememberNavController()
 
@@ -287,7 +290,8 @@ fun AppNavigation(viewModel: ProductViewModel) {
                         },
                         onBack = { navController.popBackStack() },
 
-                        onEditProfile = { navController.navigate(Routes.EditProfile) }
+                        onEditProfile = { navController.navigate(Routes.EditProfile) },
+                        onLanguageSelected = onLanguageSelected
                     )
                 } ?: LaunchedEffect(Unit) {
                     navController.navigate(Routes.Login)

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">مشروعي</string>
+    <string name="manga_lighter" translatable="false">MangaLighter</string>
+    <string name="lang_arabic">العربية</string>
+    <string name="lang_french">الانجليزية</string>
+    <string name="modify_profile">تعديل الملف الشخصي</string>
+    <string name="logout">تسجيل الخروج</string>
+    <string name="language">اللغة</string>
+    <string name="back">رجوع</string>
+    <string name="user_logo_desc">شعار المستخدم</string>
+    <string name="menu">القائمة</string>
+    <string name="connectez_vous_pour_ajouter">يرجى تسجيل الدخول لإضافة إلى السلة.</string>
+    <string name="chapitres">فصول</string>
+    <string name="user_logo">شعار المستخدم</string>
+    <string name="ajouter_au_panier">أضف إلى السلة</string>
+
+    <string name="login_title">تسجيل الدخول</string>
+    <string name="email_label">البريد الإلكتروني</string>
+    <string name="password_label">كلمة المرور</string>
+    <string name="login_button">دخول</string>
+    <string name="login_error">البريد الإلكتروني أو كلمة المرور غير صحيحة</string>
+    <string name="no_account">ليس لديك حساب؟ سجل هنا</string>
+    <string name="back_button_desc">رجوع</string>
+
+
+    <string name="register_title">إنشاء حساب</string>
+    <string name="firstname_label">الاسم الأول</string>
+    <string name="lastname_label">الاسم العائلي</string>
+    <string name="signup_button">تسجيل</string>
+    <string name="fill_all_fields">يرجى ملء جميع الحقول</string>
+    <string name="register_success">تم التسجيل بنجاح  سيتم التوجيه...</string>
+    <string name="email_already_exists">هذا البريد الإلكتروني مستخدم بالفعل</string>
+    <string name="already_have_account">لديك حساب بالفعل ؟ تسجيل الدخول</string>
+
+    <string name="mon_panier">عربة التسوق</string>
+    <string name="panier_vide">سلة المشتريات فارغة.</string>
+    <string name="total_label">المجموع:</string>
+    <string name="commander_button">طلب</string>
+    <string name="supprimer">حذف</string>
+    <string name="retour">الرجوع</string>
+
+    <string name="mes_favoris">المفضلة</string>
+    <string name="aucun_favori">لا توجد عناصر في المفضلة الخاصة بك.</string>
+
+    <string name="confirmer_commande">تأكيد الطلب</string>
+    <string name="confirmer_la_commande">تأكيد الطلب</string>
+    <string name="produit_colon">المنتج: %1$s</string>
+    <string name="prix_unitaire_colon">السعر الفردي: %1$d MAD</string>
+    <string name="quantite_colon">الكمية:</string>
+    <string name="telephone_colon">الهاتف:</string>
+    <string name="adresse_colon">العنوان:</string>
+    <string name="total_colon">المجموع: %1$d MAD</string>
+    <string name="paiement_en_ligne">الدفع الإلكتروني</string>
+    <string name="paiement_a_la_livraison">الدفع عند التسليم</string>
+    <string name="status_en_attente">قيد الانتظار</string>
+
+    <string name="mes_commandes">طلباتي</string>
+    <string name="aucune_commande_trouvee">لا توجد طلبات.</string>
+
+    <string name="date_colon">التاريخ: %1$s</string>
+    <string name="adresse_formatee">العنوان: %1$s</string>
+    <string name="telephone_formatee">الهاتف: %1$s</string>
+    <string name="prix_total_colon">السعر الإجمالي: %1$d درهم</string>
+    <string name="statut_colon">الحالة: %1$s</string>
+    <string name="paiement_colon">طريقة الدفع: %1$s</string>
+    <string name="articles_colon">العناصر:</string>
+</resources>

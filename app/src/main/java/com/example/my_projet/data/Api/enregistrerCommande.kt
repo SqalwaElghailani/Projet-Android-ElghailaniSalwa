@@ -2,7 +2,7 @@ package com.example.my_projet.data.Api
 
 import android.content.Context
 import android.util.Log
-import com.example.my_projet.ui.product.screens.Order
+import com.example.my_projet.ui.orders.Order
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File

@@ -1,7 +1,6 @@
-package com.example.my_projet.ui.product.screens
+package com.example.my_projet.ui.orders
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -15,13 +14,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.example.my_projet.data.Entities.Product
 import com.example.my_projet.data.Api.*
 import com.example.my_projet.ui.product.component.MainHeader
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
+import com.example.my_projet.R
 
 @Composable
 fun CommandeScreen(
@@ -44,7 +45,21 @@ fun CommandeScreen(
     val context = LocalContext.current
     val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
     val userId = prefs.getInt("user_id", -1)
-    val status = "en attend"
+
+    // Récupération des chaînes une seule fois, dans le contexte @Composable
+    val status = stringResource(R.string.status_en_attente)
+    val paiementEnLigne = stringResource(R.string.paiement_en_ligne)
+    val paiementALaLivraison = stringResource(R.string.paiement_a_la_livraison)
+    val retourText = stringResource(R.string.retour)
+    val confirmerCommandeText = stringResource(R.string.confirmer_commande)
+    val telephoneColon = stringResource(R.string.telephone_colon)
+    val adresseColon = stringResource(R.string.adresse_colon)
+    val totalColon = stringResource(R.string.total_colon)
+    val confirmerLaCommandeText = stringResource(R.string.confirmer_la_commande)
+    val produitColon = stringResource(R.string.produit_colon, "")
+    val prixUnitaireColon = stringResource(R.string.prix_unitaire_colon, 0)
+    val quantiteColon = stringResource(R.string.quantite_colon)
+    val chapitresText = stringResource(R.string.chapitres)
 
     var phone by remember { mutableStateOf(TextFieldValue("")) }
     var address by remember { mutableStateOf(TextFieldValue("")) }
@@ -64,11 +79,11 @@ fun CommandeScreen(
     val totalPrice by remember {
         derivedStateOf {
             productStates.values.sumOf {
-                val base = it.product.price
+                val base = it.product.price ?: 0
                 val quantity = it.quantity.value
                 val chapters = it.selectedChapters.value.size
                 var total = base * quantity * chapters
-                if (chapters == it.product.chapters) {
+                if (chapters == (it.product.chapters ?: 1)) {
                     total = (total * 0.95).toInt()
                 }
                 total
@@ -93,24 +108,34 @@ fun CommandeScreen(
             onNavigateToLogin = onNavigateToLogin,
             onNavigateToAccount = onNavigateToAccount,
             navController = navController,
-            onNavigateToFavorites = { navController.navigate("favorites") },
+            onNavigateToFavorites = onNavigateToFavorites,
             userId = userId,
             onNavigateToHome = { navController.navigate("home") }
         )
 
         Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onBack) {
-                Icon(Icons.Filled.ArrowBack, contentDescription = "Retour")
+                Icon(
+                    Icons.Filled.ArrowBack,
+                    contentDescription = retourText
+                )
             }
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Confirmer la Commande", style = MaterialTheme.typography.titleLarge)
+            Text(
+                confirmerCommandeText,
+                style = MaterialTheme.typography.titleLarge
+            )
         }
 
         Divider(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
             thickness = 1.dp,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
         )
@@ -120,11 +145,11 @@ fun CommandeScreen(
             val listState = rememberLazyListState()
 
             Column(modifier = Modifier.fillMaxWidth()) {
-                Text("Produit: ${sel.product.name}")
-                Text("Prix unitaire: ${sel.product.price} MAD")
+                Text(stringResource(R.string.produit_colon, sel.product.name ?: ""))
+                Text(stringResource(R.string.prix_unitaire_colon, sel.product.price ?: 0))
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Quantité: ")
+                    Text(quantiteColon)
                     IconButton(onClick = {
                         if (sel.quantity.value > 1) sel.quantity.value--
                     }) { Text("-") }
@@ -134,7 +159,7 @@ fun CommandeScreen(
                     }) { Text("+") }
                 }
 
-                Text("Chapitres:")
+                Text(chapitresText)
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = {
                         coroutineScope.launch {
@@ -155,7 +180,7 @@ fun CommandeScreen(
                                         else
                                             sel.selectedChapters.value + chNum
                                 },
-                                label = { Text("$chNum") },
+                                label = { Text(chNum.toString()) },
                                 modifier = Modifier.padding(horizontal = 4.dp)
                             )
                         }
@@ -175,9 +200,11 @@ fun CommandeScreen(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
         ) {
-            Text("Téléphone :", modifier = Modifier.width(100.dp))
+            Text(telephoneColon, modifier = Modifier.width(100.dp))
             OutlinedTextField(
                 value = phone,
                 onValueChange = { phone = it },
@@ -188,9 +215,11 @@ fun CommandeScreen(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
         ) {
-            Text("Adresse :", modifier = Modifier.width(100.dp))
+            Text(adresseColon, modifier = Modifier.width(100.dp))
             OutlinedTextField(
                 value = address,
                 onValueChange = { address = it },
@@ -200,14 +229,20 @@ fun CommandeScreen(
         }
 
         Spacer(modifier = Modifier.height(12.dp))
-        Text("Total: $totalPrice MAD")
+        Text(stringResource(R.string.total_colon, totalPrice))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            RadioButton(selected = paymentMode == "Paiement en ligne", onClick = { paymentMode = "Paiement en ligne" })
-            Text("Paiement en ligne")
+            RadioButton(
+                selected = paymentMode == paiementEnLigne,
+                onClick = { paymentMode = paiementEnLigne }
+            )
+            Text(paiementEnLigne)
             Spacer(modifier = Modifier.width(16.dp))
-            RadioButton(selected = paymentMode == "Paiement à la livraison", onClick = { paymentMode = "Paiement à la livraison" })
-            Text("Paiement à la livraison")
+            RadioButton(
+                selected = paymentMode == paiementALaLivraison,
+                onClick = { paymentMode = paiementALaLivraison }
+            )
+            Text(paiementALaLivraison)
         }
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -219,11 +254,11 @@ fun CommandeScreen(
                         productName = it.product.name ?: "",
                         quantity = it.quantity.value,
                         chapters = it.selectedChapters.value.toList(),
-                        unitPrice = it.product.price
+                        unitPrice = it.product.price ?: 0
                     )
                 }
 
-                val currentDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
+                val currentDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
                 val order = Order(
                     userId = userId,
                     phone = phone.text,
@@ -243,7 +278,7 @@ fun CommandeScreen(
             },
             enabled = phone.text.isNotBlank() && address.text.isNotBlank() && paymentMode.isNotEmpty()
         ) {
-            Text("Confirmer la commande")
+            Text(confirmerLaCommandeText)
         }
     }
 }

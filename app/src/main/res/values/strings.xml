@@ -1,4 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">My_Projet</string>
-    <string name="manga_lighter">MangaLighter</string>
+    <string name="app_name">My_Project</string>
+    <string name="manga_lighter" translatable="false">MangaLighter</string>
+    <string name="lang_arabic">Arabic</string>
+    <string name="lang_french">English</string>
+    <string name="modify_profile">Edit Profile</string>
+    <string name="logout">Logout</string>
+    <string name="language">Language</string>
+    <string name="back">Back</string>
+    <string name="user_logo_desc">User logo</string>
+    <string name="menu">Menu</string>
+    <string name="connectez_vous_pour_ajouter">Please log in to add to cart.</string>
+    <string name="chapitres">chapters</string>
+    <string name="user_logo">User logo</string>
+    <string name="ajouter_au_panier">Add to cart</string>
+
+    <!-- Login -->
+    <string name="login_title">Login</string>
+    <string name="email_label">Email</string>
+    <string name="password_label">Password</string>
+    <string name="login_button">Login</string>
+    <string name="login_error">Incorrect email or password</string>
+    <string name="no_account">No account? Sign up here</string>
+    <string name="back_button_desc">Back</string>
+
+    <string name="register_title">Create account</string>
+    <string name="firstname_label">First name</string>
+    <string name="lastname_label">Last name</string>
+    <string name="signup_button">Sign up</string>
+    <string name="fill_all_fields">Please fill all fields</string>
+    <string name="register_success">Registration successful. Redirecting...</string>
+    <string name="email_already_exists">This email already exists</string>
+    <string name="already_have_account">Already have an account? Login</string>
+
+    <string name="mon_panier">My Cart</string>
+    <string name="panier_vide">Your cart is empty.</string>
+    <string name="total_label">Total:</string>
+    <string name="commander_button">Place Order</string>
+    <string name="supprimer">Delete</string>
+    <string name="retour">Back</string>
+
+    <string name="mes_favoris">My Favorites</string>
+    <string name="aucun_favori">No items in your favorites.</string>
+
+    <string name="confirmer_commande">Confirm order</string>
+    <string name="confirmer_la_commande">Confirm order</string>
+    <string name="produit_colon">Product: %1$s</string>
+    <string name="prix_unitaire_colon">Unit price: %1$d MAD</string>
+    <string name="quantite_colon">Quantity:</string>
+    <string name="telephone_colon">Phone:</string>
+    <string name="adresse_colon">Address:</string>
+    <string name="total_colon">Total: %1$d MAD</string>
+    <string name="paiement_en_ligne">Online payment</string>
+    <string name="paiement_a_la_livraison">Payment on delivery</string>
+    <string name="status_en_attente">Pending</string>
+
+    <string name="mes_commandes">My Orders</string>
+    <string name="aucune_commande_trouvee">No orders found.</string>
+
+    <string name="date_colon">Date: %1$s</string>
+    <string name="adresse_formatee">Address: %1$s</string>
+    <string name="telephone_formatee">Phone: %1$s</string>
+    <string name="prix_total_colon">Total price: %1$d MAD</string>
+    <string name="statut_colon">Status: %1$s</string>
+    <string name="paiement_colon">Payment: %1$s</string>
+
+    <string name="articles_colon">Items:</string>
 </resources>
