@@ -166,8 +166,13 @@ Cette section présente les interfaces clés de l’application, à travers des 
 ![Inscription](./screenshots/figure_12.png)
 
 ---
+### 4.12 Internationalization (i18n) Support
+MangaLighter supports multiple languages to provide a localized user experience. Currently, the application supports:
 
-
+- English
+  ![Inscription](./screenshots/figure_13.png)
+- Arabic
+  ![Inscription](./screenshots/figure_14.png)
 ##  Fonctionnalités implémentées
 
 - Catalogue dynamique de mangas
@@ -185,7 +190,6 @@ Cette section présente les interfaces clés de l’application, à travers des 
 - Connexion à une base de données avec backend Node.js
 - API REST sécurisées
 - Notifications push pour commandes
-- Internationalisation (i18n)
 - Paiement en ligne (Stripe / PayPal)
 - Tests unitaires et CI/CD
 
