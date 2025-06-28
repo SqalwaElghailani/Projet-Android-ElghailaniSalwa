@@ -66,7 +66,9 @@ Cette section présente les interfaces clés de l’application, à travers des 
    - Nombre de chapitres
    - Bouton d’ajout au panier
 
+
  `![alt text](./screenshots/figure_2.png)`
+
 ###  4.2 Filtrage par genre
 
 - Affichage horizontal des catégories sous la barre de recherche
