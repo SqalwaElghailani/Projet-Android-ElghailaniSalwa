@@ -170,9 +170,11 @@ Cette section présente les interfaces clés de l’application, à travers des 
 MangaLighter supports multiple languages to provide a localized user experience. Currently, the application supports:
 
 - English
+
   - ![Inscription](./screenshots/figure_13.png)
 - Arabic
   - ![Inscription](./screenshots/figure_14.png)
+
 ##  Fonctionnalités implémentées
 
 - Catalogue dynamique de mangas
