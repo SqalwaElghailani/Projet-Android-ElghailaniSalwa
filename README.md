@@ -67,7 +67,7 @@ Cette section présente les interfaces clés de l’application, à travers des 
    - Bouton d’ajout au panier
 
 
- `![alt text](./screenshots/figure_2.png)`
+ ![alt text](./screenshots/figure_2.png)
 
 ###  4.2 Filtrage par genre
 
@@ -83,7 +83,7 @@ Cette section présente les interfaces clés de l’application, à travers des 
 - Saisie dynamique dans le champ de recherche
 - Résultats filtrés en temps réel
 
-`![Recherche](./screenshots/figure_4.png)`
+![Recherche](./screenshots/figure_4.png)
 
 ---
 
@@ -92,7 +92,7 @@ Cette section présente les interfaces clés de l’application, à travers des 
 - Détails du manga : image, résumé, prix, genre, auteur, stock ...
 - Boutons "Ajouter au panier" et "Ajouter aux favoris"
 
-`![Produit](./screenshots/figure_5.png)`
+![Produit](./screenshots/figure_5.png)
 
 ---
 
@@ -102,7 +102,7 @@ Cette section présente les interfaces clés de l’application, à travers des 
 - Icône de suppression simple
 - Affichage similaire au catalogue
 
- `![Favoris](./screenshots/figure_6.png)`
+ ![Favoris](./screenshots/figure_6.png)
 
 ---
 
@@ -112,7 +112,7 @@ Cette section présente les interfaces clés de l’application, à travers des 
 - Sélection des articles par double click
 - Bouton "Commander" activé uniquement après validation
 
-`![Panier](./screenshots/figure_7.png)`
+![Panier](./screenshots/figure_7.png)
 
 ---
 
@@ -123,7 +123,7 @@ Cette section présente les interfaces clés de l’application, à travers des 
 - Choix du mode de paiement (en ligne ou livraison)
 - Total mis à jour dynamiquement
 
- `![Commande](./screenshots/figure_8.png)`
+ ![Commande](./screenshots/figure_8.png)
 
 ---
 
@@ -133,7 +133,7 @@ Cette section présente les interfaces clés de l’application, à travers des 
 - Suivi des statuts
 - Possibilité d’annuler les commandes "En attente"
 
- `![Historique](./screenshots/figure_9.png)`
+ ![Historique](./screenshots/figure_9.png)
 
 ---
 
@@ -143,7 +143,7 @@ Cette section présente les interfaces clés de l’application, à travers des 
 - Bouton "Modifier profil"
 - Boutons de déconnexion et menu contextuel
 
-`![Profil](./screenshots/figure_10.png)`
+![Profil](./screenshots/figure_10.png)
 
 ---
 
@@ -153,7 +153,7 @@ Cette section présente les interfaces clés de l’application, à travers des 
 - Messages d’erreur intégrés
 - Lien vers inscription
 
- `![Connexion](./screenshots/figure_11.png)`
+ ![Connexion](./screenshots/figure_11.png)
 
 ---
 
@@ -163,7 +163,7 @@ Cette section présente les interfaces clés de l’application, à travers des 
 - Message de confirmation
 - Redirection automatique vers la connexion
 
-`![Inscription](./screenshots/figure_12.png)`
+![Inscription](./screenshots/figure_12.png)
 
 ---
 
