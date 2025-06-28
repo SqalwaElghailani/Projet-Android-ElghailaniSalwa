@@ -69,6 +69,13 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:$nav_version")
     implementation("com.google.dagger:hilt-android:2.56.1")
     ksp("com.google.dagger:hilt-compiler:2.56.1")
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("org.mockito:mockito-core:4.8.1")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+    testImplementation("app.cash.turbine:turbine:1.0.0")
+    testImplementation ("io.mockk:mockk:1.13.7")
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

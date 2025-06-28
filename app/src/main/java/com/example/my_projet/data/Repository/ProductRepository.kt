@@ -6,7 +6,7 @@ import com.example.my_projet.data.Entities.Product
 import javax.inject.Inject
 
 
-class ProductRepository @Inject constructor(
+open class ProductRepository @Inject constructor(
     private val api: ProductApi
 ) {
     suspend fun getProducts(): List<Product> {

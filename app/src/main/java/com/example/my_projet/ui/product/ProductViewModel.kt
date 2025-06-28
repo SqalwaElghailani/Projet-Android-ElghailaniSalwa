@@ -66,12 +66,9 @@ class ProductViewModel @Inject constructor(
                     }
 
                     is ProductIntent.AddToCart -> {
-                        // هنا كتزيد المنتوج للسلة. ممكن مثلا:
                         val updatedCartCount = _state.value.cartCount + 1
                         _state.update { it.copy(cartCount = updatedCartCount) }
 
-                        // يمكن تزيد log أو message
-                        Log.d("AddToCart", "Produit ajouté: ${intent.product.name}")
                     }
 
                     is ProductIntent.SetSelectedProducts -> {
